@@ -1,0 +1,22 @@
+FROM debian:12.7
+
+EXPOSE 5000
+
+# Establecer el directorio de trabajo en el contenedor
+WORKDIR /root
+
+# Copiar el directorio archivos-proyecto desde el servidor local al contenedor
+COPY ./archivos-proyecto/ /root/archivos-proyecto/
+
+# Instalamos los paquetes de python3 necesarios para manejar los entornos virtuales
+RUN apt-get update && \
+    apt-get install -y python3-venv
+
+# Creamos un entorno virtual en la carpeta /root
+RUN python3 -m venv ENV
+
+# Instalamos los paquetes de Python necesarios en el entorno virtual
+RUN /root/ENV/bin/python -m pip install -r /root/archivos-proyecto/requirements.txt
+
+# Establecer Bash como el shell predeterminado
+CMD ["/bin/bash"]
