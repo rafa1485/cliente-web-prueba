@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block body %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleccionar App</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .button {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+
+  </head>
+  <body>
+    <h1>Selecciona una Aplicación</h1>
+    <ul>
+        <a href={{ url_for('mezcla_optima')}} class="button">Mezcla Óptima</a>
+    </ul>
+    <ul>
+        <a href={{ url_for('abm_ingredientes')}} class="button">Base de Datos de Ingredientes</a>
+    </ul>
+
+    <br>
+
+    <ul>
+        <a href='/logout'>Cerrar sesión</a>
+    </ul>
+
+  </body>
+</html>
+{% endblock %}

@@ -1,4 +1,5 @@
-<!doctype html>
+{% extends "layout.html" %}
+{% block body %}
 <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -16,15 +17,6 @@
 
       <button type="submit">Iniciar Sesión</button>
     </form>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul>
-          {% for category, message in messages %}
-            <li><strong>{{ category }}:</strong> {{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
   </body>
 </html>
+{% endblock %}

@@ -13,8 +13,8 @@ login_manager.login_view = 'login'  # Redirige a /login si no está autenticado
 # Lista de usuarios (usuario, clave) en formato (nombre, contraseña_hash)
 usuarios = [
     ("admin", generate_password_hash("admin123")),
-    ("user1", generate_password_hash("pass1")),
-    ("user2", generate_password_hash("pass2")),
+    ("edgar", generate_password_hash("ceape2024")),
+    ("user", generate_password_hash("test2024")),
 ]
 
 # Clase de usuario que extiende UserMixin para integración con Flask-Login
@@ -35,6 +35,7 @@ def load_user(user_id):
 @app.route("/")
 @login_required
 def home():
+    #flash("Bienvenido, se ha logeado correctamente", "message")
     return f"<h1>Bienvenido, {current_user.nombre}!</h1><a href='/logout'>Cerrar sesión</a>"
 
 # Ruta para iniciar sesión
@@ -50,7 +51,7 @@ def login():
                 user = Usuario(i, nombre)
                 login_user(user)
                 flash("Inicio de sesión exitoso", "success")
-                return redirect(url_for("home"))
+                return redirect(url_for('seleccion_app'))
 
         flash("Usuario o contraseña incorrectos", "danger")
 
@@ -64,6 +65,31 @@ def logout():
     flash("Sesión cerrada", "info")
     return redirect(url_for("login"))
 
+
+# Seleccionar app
+@app.route('/seleccion_app')
+@login_required
+def seleccion_app():
+    return render_template('select_apps.html')
+
+# Aplicacion de mezcla óptima
+@app.route('/mezcla_optima')
+@login_required
+def mezcla_optima():
+    return f'''
+               <h1>Bienvenido, {current_user.nombre}!</h1>
+               <a href='/logout'>Cerrar sesión</a>
+            '''
+
+# Aplicacion de mezcla óptima
+@app.route('/abm_ingredientes')
+@login_required
+def abm_ingredientes():
+    return f'''
+               <h1>Bienvenido, {current_user.nombre}!</h1>
+               <a href='/logout'>Cerrar sesión</a>
+            '''
+
 # Punto de entrada de la aplicación
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)
