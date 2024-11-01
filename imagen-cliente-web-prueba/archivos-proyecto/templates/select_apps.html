@@ -32,19 +32,22 @@
 
   </head>
   <body>
-    <h1>Selecciona una Aplicación</h1>
-    <ul>
-        <a href={{ url_for('mezcla_optima')}} class="button">Mezcla Óptima</a>
-    </ul>
+    <h1>Selección de submódulo</h1>
+
     <ul>
         <a href={{ url_for('abm_ingredientes')}} class="button">Base de Datos de Ingredientes</a>
     </ul>
+    <ul>
+        <a href={{ url_for('mezcla_manual')}} class="button">Mezcla Manual</a>
+    </ul>
+    <ul>
+        <a href={{ url_for('mezcla_optima')}} class="button">Mezcla Óptima</a>
+    </ul>
 
     <br>
+    <hr>
 
-    <ul>
-        <a href='/logout'>Cerrar sesión</a>
-    </ul>
+    <a href='{{ url_for('logout')}}'>Cerrar sesión</a>
 
   </body>
 </html>

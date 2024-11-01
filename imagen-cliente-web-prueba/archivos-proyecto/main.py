@@ -2,6 +2,15 @@ from flask import Flask, request, redirect, url_for, render_template, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from ingredientes import conectar, tabla_existe, crear_tabla, inicializar_tabla_ingredientes, agregar_ingrediente, obtener_ingrediente, modificar_ingrediente, borrar_ingrediente
+
+conectar()
+
+existencia_tabla_ingredientes = tabla_existe('ingredientes')
+if not existencia_tabla_ingredientes:
+    crear_tabla()
+    inicializar_tabla_ingredientes()
+
 # Configuración inicial
 app = Flask(__name__)
 app.secret_key = b'elsecretodetusojos'
@@ -72,23 +81,106 @@ def logout():
 def seleccion_app():
     return render_template('select_apps.html')
 
+
+##*****************************************************************************************
+# Ruta principal que muestra todos los ingredientes
+@app.route('/abm_ingredientes')
+@login_required
+def abm_ingredientes():
+    conexion = conectar()
+    cursor = conexion.cursor()
+    cursor.execute("SELECT * FROM ingredientes")
+    ingredientes = cursor.fetchall()
+    conexion.close()
+    return render_template('ingredientes.html', ingredientes=ingredientes)
+
+# Ruta para agregar un nuevo ingrediente
+@app.route('/abm_ingredientes/agregar', methods=['POST'])
+@login_required
+def agregar():
+    nombre = request.form['nombre']
+    densidad = request.form['densidad']
+    precio = request.form['precio']
+    color = request.form['color']
+    contenido_proteico = request.form['contenido_proteico']
+    contenido_carbohidratos = request.form['contenido_carbohidratos']
+    contenido_aceites = request.form['contenido_aceites']
+    histidina = request.form['histidina']
+    isoleucina = request.form['isoleucina']
+    leucina = request.form['leucina']
+    lisina = request.form['lisina']
+    metionina = request.form['metionina']
+    fenilalanina = request.form['fenilalanina']
+    treonina = request.form['treonina']
+    triptofano = request.form['triptofano']
+    valina = request.form['valina']
+    
+    agregar_ingrediente(nombre, float(densidad), float(precio), color, float(contenido_proteico),
+                                     float(contenido_carbohidratos), float(contenido_aceites), float(histidina),
+                                     float(isoleucina), float(leucina), float(lisina), float(metionina),
+                                     float(fenilalanina), float(treonina), float(triptofano), float(valina))
+    return redirect(url_for('abm_ingredientes'))
+
+# Ruta para eliminar un ingrediente
+@app.route('/abm_ingredientes/eliminar/<int:id>')
+@login_required
+def eliminar(id):
+    borrar_ingrediente(id)
+    return redirect(url_for('abm_ingredientes'))
+
+# Ruta para editar un ingrediente
+@app.route('/abm_ingredientes/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
+def editar(id):
+    if request.method == 'POST':
+        densidad = request.form['densidad']
+        precio = request.form['precio']
+        color = request.form['color']
+        contenido_proteico = request.form['contenido_proteico']
+        contenido_carbohidratos = request.form['contenido_carbohidratos']
+        contenido_aceites = request.form['contenido_aceites']
+        histidina = request.form['histidina']
+        isoleucina = request.form['isoleucina']
+        leucina = request.form['leucina']
+        lisina = request.form['lisina']
+        metionina = request.form['metionina']
+        fenilalanina = request.form['fenilalanina']
+        treonina = request.form['treonina']
+        triptofano = request.form['triptofano']
+        valina = request.form['valina']
+
+        modificar_ingrediente(id, float(densidad), float(precio), color, float(contenido_proteico),
+                                           float(contenido_carbohidratos), float(contenido_aceites), float(histidina),
+                                           float(isoleucina), float(leucina), float(lisina), float(metionina),
+                                           float(fenilalanina), float(treonina), float(triptofano), float(valina))
+        return redirect(url_for('abm_ingredientes'))
+    else:
+        ingrediente = obtener_ingrediente(id)
+        return render_template('ingredientes.html', editar=True, ingrediente=ingrediente)
+
+
+##*************************************************************************************************************
+
+# Aplicacion de mezcla óptima
+@app.route('/mezcla_manual')
+@login_required
+def mezcla_manual():
+    return f'''
+               <h1>Bienvenido a la prueba de Mezcla Manual, {current_user.nombre}!</h1>
+               <a href='/logout'>Cerrar sesión</a>
+            '''
+
 # Aplicacion de mezcla óptima
 @app.route('/mezcla_optima')
 @login_required
 def mezcla_optima():
     return f'''
-               <h1>Bienvenido, {current_user.nombre}!</h1>
+               <h1>Bienvenido a la prueba de Mezcla Óptima, {current_user.nombre}!</h1>
                <a href='/logout'>Cerrar sesión</a>
             '''
 
-# Aplicacion de mezcla óptima
-@app.route('/abm_ingredientes')
-@login_required
-def abm_ingredientes():
-    return f'''
-               <h1>Bienvenido, {current_user.nombre}!</h1>
-               <a href='/logout'>Cerrar sesión</a>
-            '''
+
+
 
 # Punto de entrada de la aplicación
 if __name__ == "__main__":

@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+{% block body %}
+<html lang="es">
+<head>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <meta charset="UTF-8">
+    <title>Gestión de Ingredientes</title>
+</head>
+<body>
+    <h1>Gestión de Ingredientes</h1>
+    
+    <!-- Formulario para agregar o editar ingrediente -->
+    <form action="{{ url_for('agregar') if not editar else url_for('editar', id=ingrediente[0]) }}" method="POST">
+        <input type="text" name="nombre" placeholder="Nombre" value="{{ ingrediente[1] if editar else '' }}" required>
+        <input type="number" step="any" name="densidad" placeholder="Densidad" value="{{ ingrediente[2] if editar else '' }}" required>
+        <input type="number" step="any" name="precio" placeholder="Precio" value="{{ ingrediente[3] if editar else '' }}" required>
+        <input type="text" name="color" placeholder="Color" value="{{ ingrediente[4] if editar else '' }}" required>
+        <input type="number" step="any" name="contenido_proteico" placeholder="Contenido Proteico" value="{{ ingrediente[5] if editar else '' }}" required>
+        <input type="number" step="any" name="contenido_carbohidratos" placeholder="Contenido Carbohidratos" value="{{ ingrediente[6] if editar else '' }}" required>
+        <input type="number" step="any" name="contenido_aceites" placeholder="Contenido Aceites" value="{{ ingrediente[7] if editar else '' }}" required>
+        <input type="number" step="any" name="histidina" placeholder="Histidina" value="{{ ingrediente[8] if editar else '' }}" required>
+        <input type="number" step="any" name="isoleucina" placeholder="Isoleucina" value="{{ ingrediente[9] if editar else '' }}" required>
+        <input type="number" step="any" name="leucina" placeholder="Leucina" value="{{ ingrediente[10] if editar else '' }}" required>
+        <input type="number" step="any" name="lisina" placeholder="Lisina" value="{{ ingrediente[11] if editar else '' }}" required>
+        <input type="number" step="any" name="metionina" placeholder="Metionina" value="{{ ingrediente[12] if editar else '' }}" required>
+        <input type="number" step="any" name="fenilalanina" placeholder="Fenilalanina" value="{{ ingrediente[13] if editar else '' }}" required>
+        <input type="number" step="any" name="treonina" placeholder="Treonina" value="{{ ingrediente[14] if editar else '' }}" required>
+        <input type="number" step="any" name="triptofano" placeholder="Triptófano" value="{{ ingrediente[15] if editar else '' }}" required>
+        <input type="number" step="any" name="valina" placeholder="Valina" value="{{ ingrediente[16] if editar else '' }}" required>
+        <button type="submit">{{ 'Actualizar' if editar else 'Agregar' }}</button>
+    </form>
+
+    <!-- Lista de ingredientes -->
+    <h2>Lista de Ingredientes</h2>
+    <table border="1">
+        <tr>
+            <th>Nombre</th>
+            <th>Densidad</th>
+            <th>Precio</th>
+            <th>Color</th>
+            <th>Contenido Proteico</th>
+            <th>Carbohidratos</th>
+            <th>Aceites</th>
+            <th>Histidina</th>
+            <th>Isoleucina</th>
+            <th>Leucina</th>
+            <th>Lisina</th>
+            <th>Metionina</th>
+            <th>Fenilalanina</th>
+            <th>Treonina</th>
+            <th>Triptófano</th>
+            <th>Valina</th>
+            <th>Acciones</th>
+        </tr>
+        {% for ingrediente in ingredientes %}
+        <tr>
+            <td>{{ ingrediente[1] }}</td>
+            <td>{{ ingrediente[2] }}</td>
+            <td>{{ ingrediente[3] }}</td>
+            <td>{{ ingrediente[4] }}</td>
+            <td>{{ ingrediente[5] }}</td>
+            <td>{{ ingrediente[6] }}</td>
+            <td>{{ ingrediente[7] }}</td>
+            <td>{{ ingrediente[8] }}</td>
+            <td>{{ ingrediente[9] }}</td>
+            <td>{{ ingrediente[10] }}</td>
+            <td>{{ ingrediente[11] }}</td>
+            <td>{{ ingrediente[12] }}</td>
+            <td>{{ ingrediente[13] }}</td>
+            <td>{{ ingrediente[14] }}</td>
+            <td>{{ ingrediente[15] }}</td>
+            <td>{{ ingrediente[16] }}</td>
+            <td>
+                <a href="{{ url_for('editar', id=ingrediente[0]) }}">Editar</a>
+                <a href="{{ url_for('eliminar', id=ingrediente[0]) }}">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <hr>
+
+    <a href='{{ url_for('seleccion_app') }}'>Volver</a>
+
+    <br>
+
+    <a href='{{ url_for('logout') }}'>Cerrar sesión</a>
+</body>
+</html>
+{% endblock %}
