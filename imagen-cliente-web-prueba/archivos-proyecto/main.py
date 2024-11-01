@@ -162,13 +162,50 @@ def editar(id):
 ##*************************************************************************************************************
 
 # Aplicacion de mezcla óptima
-@app.route('/mezcla_manual')
+
+# Ruta para seleccionar ingredientes y calcular los valores
+@app.route('/mezcla_manual', methods=['GET', 'POST'])
 @login_required
 def mezcla_manual():
-    return f'''
-               <h1>Bienvenido a la prueba de Mezcla Manual, {current_user.nombre}!</h1>
-               <a href='/logout'>Cerrar sesión</a>
-            '''
+    ingredientes = []
+    score_proteico = 0
+    costo_por_kg = 0
+    porcentaje_total = 0
+
+    if request.method == 'POST':
+        # Cargar datos de la selección y porcentajes
+        seleccionados = request.form.getlist('ingrediente')
+        porcentajes = request.form.getlist('porcentaje')
+        
+        for i, ingrediente_id in enumerate(seleccionados):
+            porcentaje = float(porcentajes[i]) if porcentajes[i] else 0
+            ingrediente = obtener_ingrediente(ingrediente_id)
+            
+            if ingrediente:
+                nombre, precio, contenido_proteico = ingrediente[1], ingrediente[3], ingrediente[5]
+                ingredientes.append({
+                    'nombre': nombre,
+                    'porcentaje': porcentaje,
+                    'precio': precio,
+                    'contenido_proteico': contenido_proteico
+                })
+                
+                # Cálculos de porcentaje total, score proteico y costo por kg
+                porcentaje_total += porcentaje
+                score_proteico += (contenido_proteico * porcentaje / 100)
+                costo_por_kg += (precio * porcentaje / 100)
+
+    else:
+        # Muestra todos los ingredientes para seleccionar
+        conexion = conectar()
+        cursor = conexion.cursor()
+        cursor.execute("SELECT id, nombre FROM ingredientes")
+        ingredientes = cursor.fetchall()
+        conexion.close()
+
+    return render_template('mezcla_manual.html', ingredientes=ingredientes, 
+                           score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
+                           porcentaje_total=porcentaje_total)
 
 # Aplicacion de mezcla óptima
 @app.route('/mezcla_optima')

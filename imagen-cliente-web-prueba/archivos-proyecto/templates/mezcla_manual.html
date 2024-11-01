@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mezcla Manual de Ingredientes</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Seleccionar Ingredientes</h1>
+    
+    <form method="POST" action="{{ url_for('mezcla_manual') }}">
+        <table>
+            <tr>
+                <th>Seleccionar</th>
+                <th>Ingrediente</th>
+                <th>Porcentaje en Mezcla (%)</th>
+            </tr>
+            {% for ingrediente in ingredientes %}
+            <tr>
+                <td>
+                    <input type="checkbox" name="ingrediente" value="{{ ingrediente[0] }}" 
+                           {% if ingrediente.porcentaje %} checked {% endif %}>
+                </td>
+                <td>{{ ingrediente[1] }}</td>
+                <td>
+                    <input type="number" step="0.01" name="porcentaje" 
+                           value="{{ ingrediente.porcentaje if ingrediente.porcentaje else '' }}" 
+                           min="0" max="100">
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        
+        <br>
+        <button type="submit">Calcular</button>
+    </form>
+
+    <h2>Resultados</h2>
+    <p><strong>Porcentaje Total:</strong> {{ porcentaje_total }}%</p>
+    <p><strong>Score Proteico:</strong> {{ score_proteico }}</p>
+    <p><strong>Costo por kg de Mezcla:</strong> ${{ costo_por_kg }}</p>
+</body>
+</html>
