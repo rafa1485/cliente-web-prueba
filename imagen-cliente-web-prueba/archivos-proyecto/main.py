@@ -2,7 +2,7 @@ from flask import Flask, request, redirect, url_for, render_template, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from ingredientes import conectar, tabla_existe, crear_tabla, inicializar_tabla_ingredientes, agregar_ingrediente, obtener_ingrediente, modificar_ingrediente, borrar_ingrediente
+from ingredientes import conectar, tabla_existe, crear_tabla, inicializar_tabla_ingredientes, agregar_ingrediente, obtener_ingrediente, obtener_info_ingrediente, modificar_ingrediente, borrar_ingrediente
 
 conectar()
 
@@ -167,42 +167,50 @@ def editar(id):
 @app.route('/mezcla_manual', methods=['GET', 'POST'])
 @login_required
 def mezcla_manual():
-    ingredientes = []
+    #ingredientes = []
     score_proteico = 0
     costo_por_kg = 0
     porcentaje_total = 0
 
+    # Muestra todos los ingredientes para seleccionar
+    conexion = conectar()
+    cursor = conexion.cursor()
+    cursor.execute("SELECT id, nombre FROM ingredientes")
+    ingredientes = cursor.fetchall()
+    conexion.close()
+
+    dict_id_ingredientes = dict(ingredientes)
+
     if request.method == 'POST':
         # Cargar datos de la selección y porcentajes
-        seleccionados = request.form.getlist('ingrediente')
+        id_ingredientes_seleccionados = request.form.getlist('ingrediente')
         porcentajes = request.form.getlist('porcentaje')
+        print('ingredientes seleccionados')
+        print(id_ingredientes_seleccionados)
+        print('porcentajes')
+        print(porcentajes)
         
-        for i, ingrediente_id in enumerate(seleccionados):
-            porcentaje = float(porcentajes[i]) if porcentajes[i] else 0
-            ingrediente = obtener_ingrediente(ingrediente_id)
+        for id_ingrediente_seleccionado in id_ingredientes_seleccionados:
+            porcentaje_str = porcentajes[int(id_ingrediente_seleccionado)-1]
+            ingrediente_info = obtener_info_ingrediente(id_ingrediente_seleccionado)
             
-            if ingrediente:
-                nombre, precio, contenido_proteico = ingrediente[1], ingrediente[3], ingrediente[5]
-                ingredientes.append({
-                    'nombre': nombre,
-                    'porcentaje': porcentaje,
-                    'precio': precio,
-                    'contenido_proteico': contenido_proteico
-                })
+            if ingrediente_info:
+                print('porcentaje: '+ porcentaje_str)
+                print('ingrediente info: ')
+                print(ingrediente_info)
                 
                 # Cálculos de porcentaje total, score proteico y costo por kg
-                porcentaje_total += porcentaje
-                score_proteico += (contenido_proteico * porcentaje / 100)
-                costo_por_kg += (precio * porcentaje / 100)
+                porcentaje_total += int(porcentaje_str)
+                contenido_proteico = float(ingrediente_info[5])
+                precio = float(ingrediente_info[3])
+                score_proteico += (contenido_proteico * float(porcentaje_str) / 100)
+                costo_por_kg += (precio * float(porcentaje_str) / 100)
+            else:
+                print('El ingrediente '+id_ingrediente_seleccionado+' no se encuentra en la base de datos.')
+                breakpoint()
 
-    else:
-        # Muestra todos los ingredientes para seleccionar
-        conexion = conectar()
-        cursor = conexion.cursor()
-        cursor.execute("SELECT id, nombre FROM ingredientes")
-        ingredientes = cursor.fetchall()
-        conexion.close()
-
+        
+    #breakpoint()
     return render_template('mezcla_manual.html', ingredientes=ingredientes, 
                            score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
                            porcentaje_total=porcentaje_total)

@@ -121,6 +121,17 @@ def obtener_ingrediente(id):
         breakpoint()
     return ingrediente
 
+# Búsqueda y consulta de la informacion de los ingredientes
+def obtener_info_ingrediente(id):
+    conexion = conectar()
+    cursor = conexion.cursor()
+    cursor.execute("SELECT * FROM ingredientes WHERE id = ?", (id,))
+    ingrediente_info = cursor.fetchone()
+    conexion.close()
+    if ingrediente_info == None:
+        breakpoint()
+    return ingrediente_info
+
 # Modificación de un ingrediente
 def modificar_ingrediente(id, densidad=None, precio=None, color=None, contenido_proteico=None, contenido_carbohidratos=None,
                           contenido_aceites=None, histidina=None, isoleucina=None, leucina=None, lisina=None,

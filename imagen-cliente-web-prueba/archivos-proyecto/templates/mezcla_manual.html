@@ -29,8 +29,8 @@
                 </td>
                 <td>{{ ingrediente[1] }}</td>
                 <td>
-                    <input type="number" step="0.01" name="porcentaje" 
-                           value="{{ ingrediente.porcentaje if ingrediente.porcentaje else '' }}" 
+                    <input type="number" step="1.0" name="porcentaje" 
+                           value="{{ ingrediente.porcentaje }}" 
                            min="0" max="100">
                 </td>
             </tr>
