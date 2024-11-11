@@ -215,6 +215,14 @@ def mezcla_manual():
         lista_ingredientes = [id for id,_ in ingredientes]
         dict_id_porcentajes = dict(zip(lista_ingredientes,porcentajes_num))
         print(dict_id_porcentajes)
+
+        # Calculamos el porcentaje total de los ingredientes.
+        # En caso que los ingredientes sumen un valor distinto de 100% se debe imprimir un alerta.
+        porcentaje_total = sum(porcentajes_num)
+        if porcentaje_total < 100:
+            flash("Porcentaje total menor a 100%: Aumentar los porcentajes de los ingredientes", "info")
+        elif porcentaje_total > 100:
+            flash("Porcentaje total major a 100%: Disminuir los porcentajes de los ingredientes", "info")
         
         for id_ingrediente_seleccionado in id_ingredientes_seleccionados:
             porcentaje_str = porcentajes[int(id_ingrediente_seleccionado)-1]
@@ -226,7 +234,7 @@ def mezcla_manual():
                 print(ingrediente_info)
                 
                 # Cálculos de porcentaje total, score proteico y costo por kg
-                porcentaje_total += int(porcentaje_str)
+                
                 contenido_proteico = float(ingrediente_info[5])
                 precio = float(ingrediente_info[3])
                 score_proteico += (contenido_proteico * float(porcentaje_str) / 100)
@@ -234,7 +242,7 @@ def mezcla_manual():
             else:
                 print('El ingrediente '+id_ingrediente_seleccionado+' no se encuentra en la base de datos.')
                 breakpoint()
-                
+
         return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=dict_id_porcentajes,
                            score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
                            porcentaje_total=porcentaje_total)
