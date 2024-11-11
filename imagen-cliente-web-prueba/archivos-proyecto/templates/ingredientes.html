@@ -15,18 +15,19 @@
         <input type="number" step="any" name="densidad" placeholder="Densidad" value="{{ ingrediente[2] if editar else '' }}" required>
         <input type="number" step="any" name="precio" placeholder="Precio" value="{{ ingrediente[3] if editar else '' }}" required>
         <input type="text" name="color" placeholder="Color" value="{{ ingrediente[4] if editar else '' }}" required>
-        <input type="number" step="any" name="contenido_proteico" placeholder="Contenido Proteico" value="{{ ingrediente[5] if editar else '' }}" required>
-        <input type="number" step="any" name="contenido_carbohidratos" placeholder="Contenido Carbohidratos" value="{{ ingrediente[6] if editar else '' }}" required>
-        <input type="number" step="any" name="contenido_aceites" placeholder="Contenido Aceites" value="{{ ingrediente[7] if editar else '' }}" required>
-        <input type="number" step="any" name="histidina" placeholder="Histidina" value="{{ ingrediente[8] if editar else '' }}" required>
-        <input type="number" step="any" name="isoleucina" placeholder="Isoleucina" value="{{ ingrediente[9] if editar else '' }}" required>
-        <input type="number" step="any" name="leucina" placeholder="Leucina" value="{{ ingrediente[10] if editar else '' }}" required>
-        <input type="number" step="any" name="lisina" placeholder="Lisina" value="{{ ingrediente[11] if editar else '' }}" required>
-        <input type="number" step="any" name="metionina" placeholder="Metionina" value="{{ ingrediente[12] if editar else '' }}" required>
-        <input type="number" step="any" name="fenilalanina" placeholder="Fenilalanina" value="{{ ingrediente[13] if editar else '' }}" required>
-        <input type="number" step="any" name="treonina" placeholder="Treonina" value="{{ ingrediente[14] if editar else '' }}" required>
-        <input type="number" step="any" name="triptofano" placeholder="Triptófano" value="{{ ingrediente[15] if editar else '' }}" required>
-        <input type="number" step="any" name="valina" placeholder="Valina" value="{{ ingrediente[16] if editar else '' }}" required>
+        <input type="number" step="any" name="digestibilidad_proteica" placeholder="Digestibilidad Proteicq" value="{{ ingrediente[5] if editar else '' }}" required>
+        <input type="number" step="any" name="contenido_proteico" placeholder="Contenido Proteico" value="{{ ingrediente[6] if editar else '' }}" required>
+        <input type="number" step="any" name="contenido_carbohidratos" placeholder="Contenido Carbohidratos" value="{{ ingrediente[7] if editar else '' }}" required>
+        <input type="number" step="any" name="contenido_aceites" placeholder="Contenido Aceites" value="{{ ingrediente[8] if editar else '' }}" required>
+        <input type="number" step="any" name="histidina" placeholder="Histidina" value="{{ ingrediente[9] if editar else '' }}" required>
+        <input type="number" step="any" name="isoleucina" placeholder="Isoleucina" value="{{ ingrediente[10] if editar else '' }}" required>
+        <input type="number" step="any" name="leucina" placeholder="Leucina" value="{{ ingrediente[11] if editar else '' }}" required>
+        <input type="number" step="any" name="lisina" placeholder="Lisina" value="{{ ingrediente[12] if editar else '' }}" required>
+        <input type="number" step="any" name="metionina" placeholder="Metionina" value="{{ ingrediente[13] if editar else '' }}" required>
+        <input type="number" step="any" name="fenilalanina" placeholder="Fenilalanina" value="{{ ingrediente[14] if editar else '' }}" required>
+        <input type="number" step="any" name="treonina" placeholder="Treonina" value="{{ ingrediente[15] if editar else '' }}" required>
+        <input type="number" step="any" name="triptofano" placeholder="Triptófano" value="{{ ingrediente[16] if editar else '' }}" required>
+        <input type="number" step="any" name="valina" placeholder="Valina" value="{{ ingrediente[17] if editar else '' }}" required>
         <button type="submit">{{ 'Actualizar' if editar else 'Agregar' }}</button>
     </form>
 
@@ -34,10 +35,12 @@
     <h2>Lista de Ingredientes</h2>
     <table border="1">
         <tr>
+            <th>ID</th>
             <th>Nombre</th>
             <th>Densidad</th>
             <th>Precio</th>
             <th>Color</th>
+            <th>Digestibilidad Proteica</th>
             <th>Contenido Proteico</th>
             <th>Carbohidratos</th>
             <th>Aceites</th>
@@ -54,6 +57,7 @@
         </tr>
         {% for ingrediente in ingredientes %}
         <tr>
+            <td>{{ ingrediente[0] }}</td>
             <td>{{ ingrediente[1] }}</td>
             <td>{{ ingrediente[2] }}</td>
             <td>{{ ingrediente[3] }}</td>
@@ -70,6 +74,7 @@
             <td>{{ ingrediente[14] }}</td>
             <td>{{ ingrediente[15] }}</td>
             <td>{{ ingrediente[16] }}</td>
+            <td>{{ ingrediente[17] }}</td>
             <td>
                 <a href="{{ url_for('editar', id=ingrediente[0]) }}">Editar</a>
                 <a href="{{ url_for('eliminar', id=ingrediente[0]) }}">Eliminar</a>

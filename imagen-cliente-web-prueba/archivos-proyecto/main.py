@@ -102,6 +102,7 @@ def agregar():
     densidad = request.form['densidad']
     precio = request.form['precio']
     color = request.form['color']
+    digestibilidad_proteica = request.form['digestibilidad_proteica']
     contenido_proteico = request.form['contenido_proteico']
     contenido_carbohidratos = request.form['contenido_carbohidratos']
     contenido_aceites = request.form['contenido_aceites']
@@ -115,7 +116,7 @@ def agregar():
     triptofano = request.form['triptofano']
     valina = request.form['valina']
     
-    agregar_ingrediente(nombre, float(densidad), float(precio), color, float(contenido_proteico),
+    agregar_ingrediente(nombre, float(densidad), float(precio), color, float(digestibilidad_proteica), float(contenido_proteico),
                                      float(contenido_carbohidratos), float(contenido_aceites), float(histidina),
                                      float(isoleucina), float(leucina), float(lisina), float(metionina),
                                      float(fenilalanina), float(treonina), float(triptofano), float(valina))
@@ -136,6 +137,7 @@ def editar(id):
         densidad = request.form['densidad']
         precio = request.form['precio']
         color = request.form['color']
+        digestibilidad_proteica = request.form['digestibilidad_proteica']
         contenido_proteico = request.form['contenido_proteico']
         contenido_carbohidratos = request.form['contenido_carbohidratos']
         contenido_aceites = request.form['contenido_aceites']
@@ -149,7 +151,7 @@ def editar(id):
         triptofano = request.form['triptofano']
         valina = request.form['valina']
 
-        modificar_ingrediente(id, float(densidad), float(precio), color, float(contenido_proteico),
+        modificar_ingrediente(id, float(densidad), float(precio), color, float(digestibilidad_proteica), float(contenido_proteico),
                                            float(contenido_carbohidratos), float(contenido_aceites), float(histidina),
                                            float(isoleucina), float(leucina), float(lisina), float(metionina),
                                            float(fenilalanina), float(treonina), float(triptofano), float(valina))
@@ -175,20 +177,44 @@ def mezcla_manual():
     # Muestra todos los ingredientes para seleccionar
     conexion = conectar()
     cursor = conexion.cursor()
+
     cursor.execute("SELECT id, nombre FROM ingredientes")
     ingredientes = cursor.fetchall()
+
+    cursor.execute("SELECT id, digestibilidad_proteica FROM ingredientes")
+    digestibilidades = cursor.fetchall()
+    
     conexion.close()
 
-    dict_id_ingredientes = dict(ingredientes)
+    #dict_id_ingredientes = dict(ingredientes)
+
+    # Creo un diccionario de las digestibilidades indexado por el id
+    dict_id_digestibilidades = dict(digestibilidades)
 
     if request.method == 'POST':
         # Cargar datos de la selección y porcentajes
         id_ingredientes_seleccionados = request.form.getlist('ingrediente')
+        digestibilidades_form = request.form.getlist('digestibilidad')
         porcentajes = request.form.getlist('porcentaje')
         print('ingredientes seleccionados')
         print(id_ingredientes_seleccionados)
         print('porcentajes')
         print(porcentajes)
+        
+
+        ##TODO Esto debería borrarse, porque no tiene sentido que la digestibilidad se modifique durante la mezcla
+        # obtengo las digestibilidades y actualizo sus valores por si el usuario cambio alguno de los mismos
+        digestibilidades = [(id,float(digestibilidades_form[i])) for i,id in enumerate(dict_id_digestibilidades.keys())]
+        # creo un diccionario que devuelve la digestibilidad para cada ingrediente dado por su id
+        dict_id_digestibilidades = dict(digestibilidades)
+
+
+        # obtengo los porcentajes en mezcla y creo un diccionario que vincula cada ingrediente
+        # dado por su 'id' con el porcentaje correspondiente
+        porcentajes_num = [int(x) if x != '' else 0 for x in porcentajes]
+        lista_ingredientes = [id for id,_ in ingredientes]
+        dict_id_porcentajes = dict(zip(lista_ingredientes,porcentajes_num))
+        print(dict_id_porcentajes)
         
         for id_ingrediente_seleccionado in id_ingredientes_seleccionados:
             porcentaje_str = porcentajes[int(id_ingrediente_seleccionado)-1]
@@ -208,10 +234,13 @@ def mezcla_manual():
             else:
                 print('El ingrediente '+id_ingrediente_seleccionado+' no se encuentra en la base de datos.')
                 breakpoint()
+                
+        return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=dict_id_porcentajes,
+                           score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
+                           porcentaje_total=porcentaje_total)
 
-        
-    #breakpoint()
-    return render_template('mezcla_manual.html', ingredientes=ingredientes, 
+    
+    return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=False,
                            score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
                            porcentaje_total=porcentaje_total)
 

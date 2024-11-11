@@ -10,6 +10,9 @@
             padding: 10px;
         }
     </style>
+    <!-- Incluimos Mathjax para renderizar código Latex -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js"></script>
+
 </head>
 <body>
     <h1>Seleccionar Ingredientes</h1>
@@ -17,20 +20,21 @@
     <form method="POST" action="{{ url_for('mezcla_manual') }}">
         <table>
             <tr>
-                <th>Seleccionar</th>
                 <th>Ingrediente</th>
+                <th>Digestibilidad de la Protéina</th>
                 <th>Porcentaje en Mezcla (%)</th>
             </tr>
             {% for ingrediente in ingredientes %}
             <tr>
-                <td>
-                    <input type="checkbox" name="ingrediente" value="{{ ingrediente[0] }}" 
-                           {% if ingrediente.porcentaje %} checked {% endif %}>
-                </td>
                 <td>{{ ingrediente[1] }}</td>
                 <td>
+                    <input type="number" step="0.05" name="digestibilidad" 
+                           value="{{ digestibilidades[ingrediente[0]] }}" 
+                           min="0" max="1">
+                </td>
+                <td>
                     <input type="number" step="1.0" name="porcentaje" 
-                           value="{{ ingrediente.porcentaje }}" 
+                           value="{{ porcentajes_num[ingrediente[0]] }}" 
                            min="0" max="100">
                 </td>
             </tr>
@@ -45,5 +49,75 @@
     <p><strong>Porcentaje Total:</strong> {{ porcentaje_total }}%</p>
     <p><strong>Score Proteico:</strong> {{ score_proteico }}</p>
     <p><strong>Costo por kg de Mezcla:</strong> ${{ costo_por_kg }}</p>
+
+    <br>
+    <hr>
+
+    <h1>Algoritmo utilizado para Calcular el PDCAAS de la Mezcla de Ingredientes</h1>
+    
+    <h2>Paso 1: Obtener el perfil de aminoácidos y la digestibilidad de cada ingrediente</h2>
+    <p>
+        Para cada ingrediente \( i \) (donde \( i = 1, 2, \dots, N \)), se necesita:
+    </p>
+    <ul>
+        <li>\( AA_{i,j} \): La cantidad de cada aminoácido esencial (como lisina, metionina, etc.) por gramo de proteína, donde \( j \) representa el tipo de aminoácido.</li>
+        <li>\( P_i \): El contenido total de proteína en gramos por 100 gramos del ingrediente.</li>
+        <li>\( D_i \): El factor de digestibilidad de la proteína del ingrediente \( i \), que suele darse como un valor entre 0 y 1.</li>
+    </ul>
+
+    <h2>Paso 2: Calcular el contenido de aminoácidos en la mezcla</h2>
+    <p>
+        Para cada aminoácido \( j \), calcula la cantidad total en la mezcla basada en los ingredientes y sus respectivas proporciones \( W_i \), donde \( W_i \) es la fracción de cada ingrediente en la mezcla. La cantidad total de cada aminoácido en la mezcla es:
+    </p>
+    \[
+    AA_{\text{mezcla}, j} = \sum_{i=1}^{N} W_i \cdot AA_{i,j}
+    \]
+    <p>
+        Asimismo, calcula el contenido total de proteína en la mezcla:
+    </p>
+    \[
+    P_{\text{mezcla}} = \sum_{i=1}^{N} W_i \cdot P_i
+    \]
+
+    <h2>Paso 3: Calcular la digestibilidad de la proteína en la mezcla</h2>
+    <p>
+        La digestibilidad total de la mezcla, \( D_{\text{mezcla}} \), es la media ponderada de la digestibilidad de cada ingrediente, ponderada por el contenido de proteína de cada ingrediente en la mezcla:
+    </p>
+    \[
+    D_{\text{mezcla}} = \frac{\sum_{i=1}^{N} W_i \cdot P_i \cdot D_i}{\sum_{i=1}^{N} W_i \cdot P_i}
+    \]
+
+    <h2>Paso 4: Determinar el aminoácido limitante en la mezcla</h2>
+    <p>
+        Compara la proporción de cada aminoácido esencial \( j \) en la mezcla con el requerimiento de aminoácidos para la población de referencia. La puntuación de aminoácidos (AAS) de cada aminoácido \( j \) se calcula como:
+    </p>
+    \[
+    \text{AAS}_j = \frac{AA_{\text{mezcla}, j}}{\text{requerimiento}_{j}}
+    \]
+    <p>El valor de \( \text{AAS} \) más bajo indica el aminoácido limitante de la mezcla.</p>
+
+    <h2>Paso 5: Calcular el PDCAAS de la mezcla</h2>
+    <p>
+        Finalmente, una vez que se ha identificado el valor mínimo de \( \text{AAS} \), el PDCAAS de la mezcla se calcula como:
+    </p>
+    \[
+    \text{PDCAAS} = \text{AAS}_{\text{mínimo}} \times D_{\text{mezcla}}
+    \]
+    <p>Si el resultado es mayor que 1, se ajusta a 1, ya que el PDCAAS máximo permitido es 1.</p>
+
+    <h2>Ejemplo de Cálculo</h2>
+    <p>Para una mezcla de dos ingredientes \( A \) y \( B \) con los siguientes datos:</p>
+    <ul>
+        <li>Ingrediente \( A \): \( W_A = 60\% \), \( P_A = 30 \) g de proteína, \( D_A = 0.85 \).</li>
+        <li>Ingrediente \( B \): \( W_B = 40\% \), \( P_B = 20 \) g de proteína, \( D_B = 0.90 \).</li>
+    </ul>
+    <p>Para lisina y metionina:</p>
+    <ul>
+        <li>Lisina en \( A \): 4 g / 100 g de proteína.</li>
+        <li>Lisina en \( B \): 2 g / 100 g de proteína.</li>
+        <li>Metionina en \( A \): 1.5 g / 100 g de proteína.</li>
+        <li>Metionina en \( B \): 1 g / 100 g de proteína.</li>
+        <li>Requerimientos de referencia: Lisina = 5 g, Metionina = 2.5 g.</li>
+    </ul>
 </body>
 </html>

@@ -14,6 +14,7 @@ def crear_tabla():
                         densidad REAL,
                         precio REAL,
                         color TEXT,
+                        digestibilidad_proteica REAL,
                         contenido_proteico REAL,
                         contenido_carbohidratos REAL,
                         contenido_aceites REAL,
@@ -57,6 +58,7 @@ def inicializar_tabla_ingredientes():
             densidad REAL,
             precio REAL,
             color TEXT,
+            digestibilidad_proteica REAL,
             contenido_proteico REAL,
             contenido_carbohidratos REAL,
             contenido_aceites REAL,
@@ -74,20 +76,20 @@ def inicializar_tabla_ingredientes():
 
     # Insertar los valores de cada ingrediente
     ingredientes = [
-        ('Soja texturizada', 0.25, 3.5, 'Beige', 50, 30, 1.2, 650, 2300, 3800, 3900, 500, 2500, 2200, 600, 2500),
-        ('Harina de trigo', 0.6, 1, 'Blanco', 11, 73, 1.5, 170, 480, 830, 290, 160, 670, 310, 90, 570),
-        ('Harina integral de trigo', 0.6, 1, 'Marrón', 13, 67, 2.5, 250, 680, 1200, 320, 180, 800, 400, 120, 600),
-        ('Harina de garbanzo', 0.7, 2, 'Amarillo', 22, 58, 6, 340, 820, 1500, 1700, 220, 1040, 620, 150, 1080),
-        ('Harina de algarroba', 0.5, 5, 'Marrón', 4, 90, 0.6, 60, 190, 320, 350, 50, 180, 90, 30, 210),
-        ('Fécula de mandioca', 0.5, 1, 'Blanco', 1, 88, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        ('Harina de arvejas', 0.6, 2, 'Verde', 22, 60, 2.5, 420, 1000, 1600, 1700, 250, 1100, 780, 200, 1000)
+        ('Soja texturizada', 0.25, 3.5, 'Beige', 0.95, 50, 30, 1.2, 650, 2300, 3800, 3900, 500, 2500, 2200, 600, 2500),
+        ('Harina de trigo', 0.6, 1, 'Blanco', 0.85, 11, 73, 1.5, 170, 480, 830, 290, 160, 670, 310, 90, 570),
+        ('Harina integral de trigo', 0.6, 1,'Marrón', 0.8, 13, 67, 2.5, 250, 680, 1200, 320, 180, 800, 400, 120, 600),
+        ('Harina de garbanzo', 0.7, 2, 'Amarillo', 0.85, 22, 58, 6, 340, 820, 1500, 1700, 220, 1040, 620, 150, 1080),
+        ('Harina de algarroba', 0.5, 5, 'Marrón', 0.80,4, 90, 0.6, 60, 190, 320, 350, 50, 180, 90, 30, 210),
+        ('Fécula de mandioca', 0.5, 1, 'Blanco', 0.8,1, 88, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        ('Harina de arvejas', 0.6, 2, 'Verde', 0.85,22, 60, 2.5, 420, 1000, 1600, 1700, 250, 1100, 780, 200, 1000)
     ]
 
     cursor.executemany('''
-        INSERT INTO ingredientes (nombre, densidad, precio, color, contenido_proteico, contenido_carbohidratos, 
+        INSERT INTO ingredientes (nombre, densidad, precio, color, digestibilidad_proteica, contenido_proteico, contenido_carbohidratos, 
                                   contenido_aceites, histidina, isoleucina, leucina, lisina, metionina, fenilalanina, 
                                   treonina, triptofano, valina)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', ingredientes)
 
     # Confirmar los cambios y cerrar la conexión
@@ -96,14 +98,14 @@ def inicializar_tabla_ingredientes():
     print("Tabla 'ingredientes' inicializada con éxito.")
 
 # Alta de ingrediente
-def agregar_ingrediente(nombre, densidad, precio, color, contenido_proteico, contenido_carbohidratos, contenido_aceites,
+def agregar_ingrediente(nombre, densidad, precio, color, digestibilidad_proteica, contenido_proteico, contenido_carbohidratos, contenido_aceites,
                         histidina, isoleucina, leucina, lisina, metionina, fenilalanina, treonina, triptofano, valina):
     conexion = conectar()
     cursor = conexion.cursor()
-    cursor.execute('''INSERT INTO ingredientes (nombre, densidad, precio, color, contenido_proteico, contenido_carbohidratos, contenido_aceites, 
+    cursor.execute('''INSERT INTO ingredientes (nombre, densidad, precio, color, digestibilidad_proteica, contenido_proteico, contenido_carbohidratos, contenido_aceites, 
                       histidina, isoleucina, leucina, lisina, metionina, fenilalanina, treonina, triptofano, valina) 
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                   (nombre, densidad, precio, color, contenido_proteico, contenido_carbohidratos, contenido_aceites,
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                   (nombre, densidad, precio, color, digestibilidad_proteica, contenido_proteico, contenido_carbohidratos, contenido_aceites,
                     histidina, isoleucina, leucina, lisina, metionina, fenilalanina, treonina, triptofano, valina))
     conexion.commit()
     conexion.close()
@@ -133,13 +135,13 @@ def obtener_info_ingrediente(id):
     return ingrediente_info
 
 # Modificación de un ingrediente
-def modificar_ingrediente(id, densidad=None, precio=None, color=None, contenido_proteico=None, contenido_carbohidratos=None,
+def modificar_ingrediente(id, densidad=None, precio=None, color=None, digestibilidad_proteica=None, contenido_proteico=None, contenido_carbohidratos=None,
                           contenido_aceites=None, histidina=None, isoleucina=None, leucina=None, lisina=None,
                           metionina=None, fenilalanina=None, treonina=None, triptofano=None, valina=None):
     conexion = conectar()
     cursor = conexion.cursor()
     valores = {
-        "densidad": densidad, "precio": precio, "color": color, "contenido_proteico": contenido_proteico,
+        "densidad": densidad, "precio": precio, "color": color, "digestibilidad_proteica":digestibilidad_proteica, "contenido_proteico": contenido_proteico,
         "contenido_carbohidratos": contenido_carbohidratos, "contenido_aceites": contenido_aceites,
         "histidina": histidina, "isoleucina": isoleucina, "leucina": leucina, "lisina": lisina,
         "metionina": metionina, "fenilalanina": fenilalanina, "treonina": treonina, "triptofano": triptofano,
@@ -172,6 +174,7 @@ if __name__ == "__main__":
         densidad=0.68,
         precio=1.5,
         color="Amarillo",
+        digestibilidad_proteica=1,
         contenido_proteico=36.49,
         contenido_carbohidratos=30.16,
         contenido_aceites=19.94,
