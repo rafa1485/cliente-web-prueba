@@ -5,6 +5,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from ingredientes import conectar, tabla_existe, crear_tabla, inicializar_tabla_ingredientes, agregar_ingrediente, obtener_ingrediente, obtener_info_ingrediente, modificar_ingrediente, borrar_ingrediente
 
+from excel_output import crear_tabla_calculos
+
 conectar()
 
 existencia_tabla_ingredientes = tabla_existe('ingredientes')
@@ -232,6 +234,7 @@ def mezcla_manual():
             flash("Porcentaje total major a 100%: Disminuir los porcentajes de los ingredientes", "info")
         
         # icializo los diccionarios necesarios para hacer las cuentas
+        dict_id_nombre = {}
         dict_id_cont_proteina = {}
         dict_id_digest_proteina = {}
         dict_id_precio = {}
@@ -249,6 +252,8 @@ def mezcla_manual():
                 print('ingrediente info: ')
                 print(ingrediente_info)
                 
+                nombre_ingre = ingrediente_info[1]
+
                 contenido_proteico = float(ingrediente_info[5])
 
                 digest_proteina = float(ingrediente_info[5])
@@ -261,13 +266,15 @@ def mezcla_manual():
                 
                 contenido_lipidos = float(ingrediente_info[8])
 
+                dict_id_nombre.update({id_ingrediente_seleccionado:nombre_ingre})
+
                 dict_id_precio.update({id_ingrediente_seleccionado:precio})
 
                 dict_id_cont_proteina.update({id_ingrediente_seleccionado:contenido_proteico})
 
                 dict_id_digest_proteina.update({id_ingrediente_seleccionado:digest_proteina})
 
-                dict_id_amino.update({id_ingrediente_seleccionado:list(ingrediente_info[9:17])})
+                dict_id_amino.update({id_ingrediente_seleccionado:list(ingrediente_info[9:18])})
 
                 dict_id_carbohidr.update({id_ingrediente_seleccionado:contenido_carbohidr})
 
@@ -319,10 +326,17 @@ def mezcla_manual():
         print(CP)
 
         #--------------------------------------------------------------------------------------
-        # mg del j-esimo Aminoacido esencial para cada ingrediente i
+        # mg del j-esimo Aminoacido esencial para cada gramo del ingrediente i
         print(AA)
         
-        print(np.dot(CP.transpose(),AA))
+        #--------------------------------------------------------------------------------------
+        # mg del j-esimo Aminoacido esencial en cada gramo de mezcla
+        AAm = np.dot(CP.transpose(),AA)
+        print(AAm)
+
+        wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, contenido_aminoacidos=dict_id_amino)
+
+        wb.save('./resultados_calculos_ejemplo.xlsx')
 
         return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=dict_id_porcentajes,
                            score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
