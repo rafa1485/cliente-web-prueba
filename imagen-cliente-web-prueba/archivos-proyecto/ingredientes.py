@@ -134,6 +134,8 @@ def obtener_info_ingrediente(id):
         breakpoint()
     return ingrediente_info
 
+#TODO
+# No me permite cambiar el nombre de los ingredientes, sería bueno agregarlo
 # Modificación de un ingrediente
 def modificar_ingrediente(id, densidad=None, precio=None, color=None, digestibilidad_proteica=None, contenido_proteico=None, contenido_carbohidratos=None,
                           contenido_aceites=None, histidina=None, isoleucina=None, leucina=None, lisina=None,

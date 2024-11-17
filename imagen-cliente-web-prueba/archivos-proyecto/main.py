@@ -1,5 +1,5 @@
 import numpy as np
-from flask import Flask, request, redirect, url_for, render_template, flash
+from flask import Flask, request, redirect, url_for, render_template, flash, send_file
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -254,7 +254,7 @@ def mezcla_manual():
                 
                 nombre_ingre = ingrediente_info[1]
 
-                contenido_proteico = float(ingrediente_info[5])
+                contenido_proteico = float(ingrediente_info[6])
 
                 digest_proteina = float(ingrediente_info[5])
 
@@ -334,7 +334,7 @@ def mezcla_manual():
         AAm = np.dot(CP.transpose(),AA)
         print(AAm)
 
-        wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, contenido_aminoacidos=dict_id_amino)
+        wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino)
 
         wb.save('./resultados_calculos_ejemplo.xlsx')
 
@@ -346,6 +346,16 @@ def mezcla_manual():
     return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=False,
                            score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
                            porcentaje_total=porcentaje_total)
+
+# Descarga de resultado y cálculos de mezcla manual
+@app.route('/descargar-mezcla-manual')
+@login_required
+def descargar_resultados_manual():
+    PATH='resultados_calculos_ejemplo.xlsx'
+    try:
+        return send_file(PATH, as_attachment=True)
+    except Exception as e:
+        return f"Error al descargar el archivo: {str(e)}", 500
 
 # Aplicacion de mezcla óptima
 @app.route('/mezcla_optima')
