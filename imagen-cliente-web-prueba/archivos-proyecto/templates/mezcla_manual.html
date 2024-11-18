@@ -20,6 +20,7 @@
     
     <form method="POST" action="{{ url_for('mezcla_manual') }}">
         <table>
+            <caption>Selección de % de ingredientes</caption>
             <tr>
                 <th>Ingrediente</th>
                 <th>Digestibilidad de la Protéina</th>
@@ -42,6 +43,25 @@
             {% endfor %}
         </table>
         
+        <br>
+
+        <table>
+            <caption>Perfíl de Amino Ácidos Escenciales [mg/gr de proteína]</caption>
+            <tr></tr>
+            {% for aminoacido in aminoacidos %}
+                <td>{{ aminoacido }}</td>
+            {% endfor %}
+            </tr>
+
+            <tr></tr>
+            {% for aminoacido in aminoacidos %}
+                <td>{{ referencia_aminoacidos[aminoacido] }}</td>
+            {% endfor %}
+            </tr>
+        </table>
+        
+
+
         <br>
         <button type="submit">Calcular</button>
     </form>

@@ -7,6 +7,12 @@ from ingredientes import conectar, tabla_existe, crear_tabla, inicializar_tabla_
 
 from excel_output import crear_tabla_calculos
 
+
+## Defino los contenidos de referencia de los distintos aminoacidos
+perfil_aminoacidos_esenciales = {'histidina':18, 'isoleucina':25, 'leucina':55, 'lisina':51, 'metionina':25, 'fenilalanina':47, 'treonina':27, 'triptofano':7, 'valina':32}
+aminoacidos = [x for x in perfil_aminoacidos_esenciales.keys()]
+
+
 conectar()
 
 existencia_tabla_ingredientes = tabla_existe('ingredientes')
@@ -24,7 +30,7 @@ login_manager.login_view = 'login'  # Redirige a /login si no está autenticado
 
 # Lista de usuarios (usuario, clave) en formato (nombre, contraseña_hash)
 usuarios = [
-    ("admin", generate_password_hash("admin123")),
+    ("admin", generate_password_hash("admin")),
     ("edgar", generate_password_hash("ceape2024")),
     ("user", generate_password_hash("test2024")),
 ]
@@ -293,22 +299,22 @@ def mezcla_manual():
         
         
         D_i = [] # Vector Digestibilidad
-        P_i = [] # Vactor Porcentajes de Ingrediente
+        W_i = [] # Vector Porcentajes de Ingrediente
         Costo_i = [] # Vector Costo de ingredientes
-        CP_i = [] # Vector Composición Proteica de Ingredientes
+        P_i = [] # Vector Composición Proteica de Ingredientes
         AA_ij = [] # Matriz del j-esimo Amino Ácidos del ingrediente i
 
         for id in id_ingredientes_seleccionados:
             D_i.append([dict_id_digest_proteina[id]])
-            P_i.append([dict_id_porcentajes[id]])
+            W_i.append([dict_id_porcentajes[id]])
             Costo_i.append([dict_id_precio[id]])
-            CP_i.append([dict_id_cont_proteina[id]])
+            P_i.append([dict_id_cont_proteina[id]])
             AA_ij.append(dict_id_amino[id])
         
         D = np.array(D_i)
-        P = np.array(P_i)/100
+        P = np.array(W_i)/100
         C = np.array(Costo_i)
-        CP = np.array(CP_i)
+        CP = np.array(P_i)
         AA = np.array(AA_ij)
         
 
@@ -339,13 +345,15 @@ def mezcla_manual():
         wb.save('./resultados_calculos_ejemplo.xlsx')
 
         return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=dict_id_porcentajes,
-                           score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
-                           porcentaje_total=porcentaje_total)
+                            aminoacidos=aminoacidos ,referencia_aminoacidos=perfil_aminoacidos_esenciales,
+                            score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
+                            porcentaje_total=porcentaje_total)
 
     
     return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=False,
-                           score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
-                           porcentaje_total=porcentaje_total)
+                            aminoacidos=aminoacidos ,referencia_aminoacidos=perfil_aminoacidos_esenciales,
+                            score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
+                            porcentaje_total=porcentaje_total)
 
 # Descarga de resultado y cálculos de mezcla manual
 @app.route('/descargar-mezcla-manual')
