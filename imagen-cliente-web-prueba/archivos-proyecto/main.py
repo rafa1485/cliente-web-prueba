@@ -9,8 +9,8 @@ from excel_output import crear_tabla_calculos
 
 
 ## Defino los contenidos de referencia de los distintos aminoacidos
-perfil_aminoacidos_esenciales = {'histidina':18, 'isoleucina':25, 'leucina':55, 'lisina':51, 'metionina':25, 'fenilalanina':47, 'treonina':27, 'triptofano':7, 'valina':32}
-aminoacidos = [x for x in perfil_aminoacidos_esenciales.keys()]
+requerimiento_aminoacidos_esenciales = {'histidina':18, 'isoleucina':25, 'leucina':55, 'lisina':51, 'metionina':25, 'fenilalanina':47, 'treonina':27, 'triptofano':7, 'valina':32}
+aminoacidos = [x for x in requerimiento_aminoacidos_esenciales.keys()]
 
 
 conectar()
@@ -298,11 +298,12 @@ def mezcla_manual():
         print(dict_id_amino)
         
         
-        D_i = [] # Vector Digestibilidad
+        D_i = [] # Vector Digestibilidad de la proteína de cada ingrediente
         W_i = [] # Vector Porcentajes de Ingrediente
         Costo_i = [] # Vector Costo de ingredientes
-        P_i = [] # Vector Composición Proteica de Ingredientes
+        P_i = [] # Vector Composición Proteica de Ingredientes por gr de ingrediente
         AA_ij = [] # Matriz del j-esimo Amino Ácidos del ingrediente i
+        
 
         for id in id_ingredientes_seleccionados:
             D_i.append([dict_id_digest_proteina[id]])
@@ -310,26 +311,39 @@ def mezcla_manual():
             Costo_i.append([dict_id_precio[id]])
             P_i.append([dict_id_cont_proteina[id]])
             AA_ij.append(dict_id_amino[id])
+
+        
+        req_AA = [[requerimiento_aminoacidos_esenciales[j] for j in requerimiento_aminoacidos_esenciales.keys()]] # Requerimientos de amonoacidos esenciales
         
         D = np.array(D_i)
-        P = np.array(W_i)/100
+        W = np.array(W_i)/100
         C = np.array(Costo_i)
-        CP = np.array(P_i)
+        P = np.array(P_i)/100
         AA = np.array(AA_ij)
+        rAA = np.array(req_AA)
         
-
-        #---------------------------------------------------------------------------------------
-        # Calculo de la digestigilidad promedio de la mezcla
-        Dm = np.dot(P.transpose(),D)[0,0]
-        print(Dm)
 
         #---------------------------------------------------------------------------------------
         # Calculo del costo de la materia prima
-        costo_por_kg = np.dot(P.transpose(),C)[0,0]
+        costo_por_kg = np.dot(W.transpose(),C)[0,0]
 
         #----------------------------------------------------
         # Contenido proteico
-        print(CP)
+        print(P)
+
+        #----------------------------------------------------
+        # Fracción de cada proteína presente en la mezcla
+        WP = W*P
+        print(WP)
+        print('Proteína total en un gr de mezcla')
+        P_mezcla = WP.sum()
+        print(P_mezcla)
+
+        #---------------------------------------------------------------------------------------
+        # Calculo de la digestigilidad promedio de la mezcla
+        Dm = (np.dot(WP.transpose(),D)/P_mezcla)[0,0]
+        print('Digestibilidad promedio')
+        print(Dm)
 
         #--------------------------------------------------------------------------------------
         # mg del j-esimo Aminoacido esencial para cada gramo del ingrediente i
@@ -337,21 +351,27 @@ def mezcla_manual():
         
         #--------------------------------------------------------------------------------------
         # mg del j-esimo Aminoacido esencial en cada gramo de mezcla
-        AAm = np.dot(CP.transpose(),AA)
-        print(AAm)
+        AA_mezcla = np.dot(P.transpose(),AA)
+        print(AA_mezcla)
+
+        #--------------------------------------------------------------------------------------
+        # calculo de los ASS_j
+        ASS = np.divide((AA_mezcla / P_mezcla) , rAA)
+        print('ASS')
+        print(ASS)
 
         wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino)
 
         wb.save('./resultados_calculos_ejemplo.xlsx')
 
         return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=dict_id_porcentajes,
-                            aminoacidos=aminoacidos ,referencia_aminoacidos=perfil_aminoacidos_esenciales,
+                            aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
                             score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
                             porcentaje_total=porcentaje_total)
 
     
     return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=False,
-                            aminoacidos=aminoacidos ,referencia_aminoacidos=perfil_aminoacidos_esenciales,
+                            aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
                             score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
                             porcentaje_total=porcentaje_total)
 
