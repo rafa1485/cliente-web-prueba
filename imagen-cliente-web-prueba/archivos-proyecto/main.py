@@ -360,7 +360,7 @@ def mezcla_manual():
         print('ASS')
         print(ASS)
 
-        wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino)
+        wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA)
 
         wb.save('./resultados_calculos_ejemplo.xlsx')
 

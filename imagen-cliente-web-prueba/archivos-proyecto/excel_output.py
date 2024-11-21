@@ -3,7 +3,7 @@ import numpy as np
 
 aminoacidos_esenciales = ['histidina', 'isoleucina', 'leucina', 'lisina', 'metionina', 'fenilalanina', 'treonina', 'triptofano', 'valina']
 
-def crear_tabla_calculos(nombres, fraccion_proteina, digestibilidad_proteina, contenido_aminoacidos):
+def crear_tabla_calculos(nombres, fraccion_proteina, digestibilidad_proteina, contenido_aminoacidos, requerimientos):
     wb = Workbook()
 
     ws = wb.active
@@ -14,7 +14,9 @@ def crear_tabla_calculos(nombres, fraccion_proteina, digestibilidad_proteina, co
 
     ws.cell(row=2, column=4, value='DIGEST. PROT.')
 
-    ws.cell(row=1, column=5, value='CONT. AMINO ACIDOS. [mg por gr de proteína]')
+    ws.cell(row=1, column=5, value='CONT. AMINOACIDOS. [mg por gr de proteína]')
+
+    ws.cell(row=9, column=5, value='REQUERI. AMINOACIDOS')
 
     for nc,aa_nombre in enumerate(aminoacidos_esenciales, start=5):
         ws.cell(row=2, column=nc, value=aa_nombre)
@@ -31,6 +33,9 @@ def crear_tabla_calculos(nombres, fraccion_proteina, digestibilidad_proteina, co
 
             ws.cell(row=nf, column=nc, value=aa)
 
+            ws.cell(row=10, column=nc, value=requerimientos[0][nc-5])
 
 
+    print('requerimientos')
+    print(requerimientos)
     return wb
