@@ -356,11 +356,13 @@ def mezcla_manual():
 
         #--------------------------------------------------------------------------------------
         # calculo de los ASS_j
-        ASS = np.divide((AA_mezcla / P_mezcla) , rAA)
-        print('ASS')
-        print(ASS)
+        AAS = np.divide((AA_mezcla / P_mezcla) , rAA)
+        print('Puntuación de Aminoácidos (AAS)')
+        print(AAS)
 
-        wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA)
+        PDCAAS = AAS.min() * Dm
+
+        wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla=AA_mezcla ,puntaje_aminoacidos=AAS, digestibilidad=Dm, PDCAAS=PDCAAS)
 
         wb.save('./resultados_calculos_ejemplo.xlsx')
 
