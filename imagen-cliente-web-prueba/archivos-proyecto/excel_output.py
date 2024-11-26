@@ -3,7 +3,7 @@ import numpy as np
 
 aminoacidos_esenciales = ['histidina', 'isoleucina', 'leucina', 'lisina', 'metionina', 'fenilalanina', 'treonina', 'triptofano', 'valina']
 
-def crear_tabla_calculos(nombres, fraccion_proteina, digestibilidad_proteina, contenido_aminoacidos, requerimientos, porcentajes_mezcla, aminoacidos_mezcla, puntaje_aminoacidos, digestibilidad, PDCAAS):
+def crear_tabla_calculos(nombres, fraccion_proteina, digestibilidad_proteina, contenido_aminoacidos, requerimientos, porcentajes_mezcla, aminoacidos_mezcla_gr_mezcla, fraccion_proteina_mezcla, puntaje_aminoacidos, digestibilidad, PDCAAS):
     wb = Workbook()
 
     ws = wb.active
@@ -17,6 +17,7 @@ def crear_tabla_calculos(nombres, fraccion_proteina, digestibilidad_proteina, co
     ws.cell(row=2, column=4, value='DIGEST. PROT.')
 
     ws.cell(row=1, column=5, value='CONTENIDO DE AMINOACIDOS. [mg por gr de proteína]')
+    ws.merge_cells(start_row=1, start_column=5, end_row=1, end_column=4+len(aminoacidos_esenciales))
 
     for nc,aa_nombre in enumerate(aminoacidos_esenciales, start=5):
         ws.cell(row=2, column=nc, value=aa_nombre)
@@ -36,12 +37,22 @@ def crear_tabla_calculos(nombres, fraccion_proteina, digestibilidad_proteina, co
 
 
     # TABLA 2 - Requerimientos
-    ws.cell(row=5+len(nombres), column=5, value='REQUERIMIENTOS DE  [mg por gr proteína]')
+    ws.cell(row=5+len(nombres), column=5, value='REQUERIMIENTOS DE AMINOÁCIDOS ESCENCIALES [mg por gr proteína]')
     
     for nc,aa_nombre in enumerate(aminoacidos_esenciales, start=5):
         ws.cell(row=6+len(nombres), column=nc, value=aa_nombre)
 
         ws.cell(row=7+len(nombres), column=nc, value=requerimientos[0][nc-5])
+
+
+    # SECCION RESULTADOS MEZCLA
+    ws.cell(row=9+len(nombres), column=2, value='RESULTADOS DE MEZCLA')
+
+    # PROTEINA DE MEZCLA
+    ws.cell(row=11+len(nombres), column=3, value='FRAC. PROT. MEZCLA')
+    ws.cell(row=12+len(nombres), column=3, value=fraccion_proteina_mezcla)
+    ws.cell(row=12+len(nombres), column=3).number_format = '0.0000'
+
 
     # TABLA 3 - Porcentajes mezcla ingredientes
     ws.cell(row=2, column=7+len(aminoacidos_esenciales), value='FRACCION MEZCLA [%]')
@@ -49,24 +60,37 @@ def crear_tabla_calculos(nombres, fraccion_proteina, digestibilidad_proteina, co
     for nf,p in enumerate(porcentajes_mezcla,3):
         ws.cell(row=nf, column=7+len(aminoacidos_esenciales), value=p[0]*100)
 
-    # TABLA 4 - Aminoácidos mezcla
+    # TABLA 4 - Aminoácidos mezcla por gramo de mezcla
     ws.cell(row=10+len(nombres), column=5, value='AMINOACIDOS EN MEZCLA  [mg por gr de mezcla]')
     
     for nc,aa_nombre in enumerate(aminoacidos_esenciales, start=5):
         ws.cell(row=11+len(nombres), column=nc, value=aa_nombre)
-        ws.cell(row=12+len(nombres), column=nc, value=aminoacidos_mezcla[0][nc-5]  )
+        ws.cell(row=12+len(nombres), column=nc, value=aminoacidos_mezcla_gr_mezcla[0][nc-5]  )
+        ws.cell(row=12+len(nombres), column=nc).number_format = '0.0000'
+    
 
-    # TABLA 5 - AAS 
-    ws.cell(row=15+len(nombres), column=5, value='PUNTAJE DE AMINOACIDOS (AAS)')
+    # TABLA 5 - Aminoácidos mezcla por gr de proteína
+    ws.cell(row=14+len(nombres), column=5, value='AMINOACIDOS EN MEZCLA  [mg por gr de proteína en la mezcla]')
+    
     for nc,aa_nombre in enumerate(aminoacidos_esenciales, start=5):
-        ws.cell(row=16+len(nombres), column=nc, value=aa_nombre)
-        ws.cell(row=17+len(nombres), column=nc, value=puntaje_aminoacidos[0][nc-5] )
+        ws.cell(row=15+len(nombres), column=nc, value=aa_nombre)
+        ws.cell(row=16+len(nombres), column=nc, value=(aminoacidos_mezcla_gr_mezcla[0][nc-5])/fraccion_proteina_mezcla  )
+        ws.cell(row=16+len(nombres), column=nc).number_format = '0.0000'
+
+    # TABLA 6 - AAS 
+    ws.cell(row=18+len(nombres), column=5, value='PUNTAJE DE AMINOACIDOS (AAS)')
+    for nc,aa_nombre in enumerate(aminoacidos_esenciales, start=5):
+        ws.cell(row=19+len(nombres), column=nc, value=aa_nombre)
+        ws.cell(row=20+len(nombres), column=nc, value=puntaje_aminoacidos[0][nc-5] )
+        ws.cell(row=20+len(nombres), column=nc).number_format = '0.0000'
 
     # RESULTADO FINAL - DIGESTIBILIDAD Y PDCAAS
-    ws.cell(row=20+len(nombres), column=5, value='DIGESTIBILIDAD')
-    ws.cell(row=21+len(nombres), column=5, value=digestibilidad)
+    ws.cell(row=23+len(nombres), column=5, value='DIGESTIBILIDAD')
+    ws.cell(row=24+len(nombres), column=5, value=digestibilidad)
+    ws.cell(row=24+len(nombres), column=5).number_format = '0.0000'
 
-    ws.cell(row=23+len(nombres), column=5, value='PDCAAS')
-    ws.cell(row=24+len(nombres), column=5, value=PDCAAS)
+    ws.cell(row=26+len(nombres), column=5, value='PDCAAS')
+    ws.cell(row=27+len(nombres), column=5, value=PDCAAS)
+    ws.cell(row=27+len(nombres), column=5).number_format = '0.0000'
 
     return wb

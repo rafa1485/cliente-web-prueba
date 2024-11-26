@@ -227,149 +227,154 @@ def mezcla_manual():
         for id in lista_ingredientes:
             if dict_id_porcentajes[id] > 0:
                 id_ingredientes_seleccionados.append(id)
-
-        print('ingredientes seleccionados')
-        print(id_ingredientes_seleccionados)
-
-        # Calculamos el porcentaje total de los ingredientes.
-        # En caso que los ingredientes sumen un valor distinto de 100% se debe imprimir un alerta.
-        porcentaje_total = sum(porcentajes_num)
-        if porcentaje_total < 100:
-            flash("Porcentaje total menor a 100%: Aumentar los porcentajes de los ingredientes", "info")
-        elif porcentaje_total > 100:
-            flash("Porcentaje total major a 100%: Disminuir los porcentajes de los ingredientes", "info")
         
-        # icializo los diccionarios necesarios para hacer las cuentas
-        dict_id_nombre = {}
-        dict_id_cont_proteina = {}
-        dict_id_digest_proteina = {}
-        dict_id_precio = {}
-        dict_id_amino = {}
-        dict_id_carbohidr = {}
-        dict_id_lipidos = {}
+        if len(id_ingredientes_seleccionados) != 0:
+        
 
+            print('ingredientes seleccionados')
+            print(id_ingredientes_seleccionados)
 
-        for id_ingrediente_seleccionado in id_ingredientes_seleccionados:
-            porcentaje_str = str(dict_id_porcentajes[id_ingrediente_seleccionado])
-            ingrediente_info = obtener_info_ingrediente(id_ingrediente_seleccionado)
+            # Calculamos el porcentaje total de los ingredientes.
+            # En caso que los ingredientes sumen un valor distinto de 100% se debe imprimir un alerta.
+            porcentaje_total = sum(porcentajes_num)
+            if porcentaje_total < 100:
+                flash("Porcentaje total menor a 100%: Aumentar los porcentajes de los ingredientes", "info")
+            elif porcentaje_total > 100:
+                flash("Porcentaje total major a 100%: Disminuir los porcentajes de los ingredientes", "info")
             
-            if ingrediente_info:
-                print('porcentaje: '+ porcentaje_str)
-                print('ingrediente info: ')
-                print(ingrediente_info)
+            # icializo los diccionarios necesarios para hacer las cuentas
+            dict_id_nombre = {}
+            dict_id_cont_proteina = {}
+            dict_id_digest_proteina = {}
+            dict_id_precio = {}
+            dict_id_amino = {}
+            dict_id_carbohidr = {}
+            dict_id_lipidos = {}
+
+
+            for id_ingrediente_seleccionado in id_ingredientes_seleccionados:
+                porcentaje_str = str(dict_id_porcentajes[id_ingrediente_seleccionado])
+                ingrediente_info = obtener_info_ingrediente(id_ingrediente_seleccionado)
                 
-                nombre_ingre = ingrediente_info[1]
+                if ingrediente_info:
+                    print('porcentaje: '+ porcentaje_str)
+                    print('ingrediente info: ')
+                    print(ingrediente_info)
+                    
+                    nombre_ingre = ingrediente_info[1]
 
-                contenido_proteico = float(ingrediente_info[6])
+                    contenido_proteico = float(ingrediente_info[6])
 
-                digest_proteina = float(ingrediente_info[5])
+                    digest_proteina = float(ingrediente_info[5])
 
-                precio = float(ingrediente_info[3])
+                    precio = float(ingrediente_info[3])
 
-                densidad = float(ingrediente_info[2])
+                    densidad = float(ingrediente_info[2])
 
-                contenido_carbohidr = float(ingrediente_info[7])
-                
-                contenido_lipidos = float(ingrediente_info[8])
+                    contenido_carbohidr = float(ingrediente_info[7])
+                    
+                    contenido_lipidos = float(ingrediente_info[8])
 
-                dict_id_nombre.update({id_ingrediente_seleccionado:nombre_ingre})
+                    dict_id_nombre.update({id_ingrediente_seleccionado:nombre_ingre})
 
-                dict_id_precio.update({id_ingrediente_seleccionado:precio})
+                    dict_id_precio.update({id_ingrediente_seleccionado:precio})
 
-                dict_id_cont_proteina.update({id_ingrediente_seleccionado:contenido_proteico})
+                    dict_id_cont_proteina.update({id_ingrediente_seleccionado:contenido_proteico})
 
-                dict_id_digest_proteina.update({id_ingrediente_seleccionado:digest_proteina})
+                    dict_id_digest_proteina.update({id_ingrediente_seleccionado:digest_proteina})
 
-                dict_id_amino.update({id_ingrediente_seleccionado:list(ingrediente_info[9:18])})
+                    dict_id_amino.update({id_ingrediente_seleccionado:list(ingrediente_info[9:18])})
 
-                dict_id_carbohidr.update({id_ingrediente_seleccionado:contenido_carbohidr})
+                    dict_id_carbohidr.update({id_ingrediente_seleccionado:contenido_carbohidr})
 
-                dict_id_lipidos.update({id_ingrediente_seleccionado:contenido_lipidos})
+                    dict_id_lipidos.update({id_ingrediente_seleccionado:contenido_lipidos})
 
-                #score_proteico += (contenido_proteico * float(porcentaje_str) / 100)
-                #costo_por_kg += (precio * float(porcentaje_str) / 100)
-            else:
-                print('El ingrediente '+id_ingrediente_seleccionado+' no se encuentra en la base de datos.')
-                breakpoint()
-        print(dict_id_precio)
-        print(dict_id_cont_proteina)
-        print(contenido_carbohidr)
-        print(contenido_lipidos)
-        print(dict_id_amino)
-        
-        
-        D_i = [] # Vector Digestibilidad de la proteína de cada ingrediente
-        W_i = [] # Vector Porcentajes de Ingrediente
-        Costo_i = [] # Vector Costo de ingredientes
-        P_i = [] # Vector Composición Proteica de Ingredientes por gr de ingrediente
-        AA_ij = [] # Matriz del j-esimo Amino Ácidos del ingrediente i
-        
+                    #score_proteico += (contenido_proteico * float(porcentaje_str) / 100)
+                    #costo_por_kg += (precio * float(porcentaje_str) / 100)
+                else:
+                    print('El ingrediente '+id_ingrediente_seleccionado+' no se encuentra en la base de datos.')
+                    breakpoint()
+            #print(dict_id_precio)
+            #print(dict_id_cont_proteina)
+            #print(contenido_carbohidr)
+            #print(contenido_lipidos)
+            #print(dict_id_amino)
+            
+            
+            D_i = [] # Vector Digestibilidad de la proteína de cada ingrediente
+            W_i = [] # Vector Porcentajes de Ingrediente
+            Costo_i = [] # Vector Costo de ingredientes
+            P_i = [] # Vector Composición Proteica de Ingredientes por gr de ingrediente
+            AA_ij = [] # Matriz del j-esimo Amino Ácidos del ingrediente i
+            
 
-        for id in id_ingredientes_seleccionados:
-            D_i.append([dict_id_digest_proteina[id]])
-            W_i.append([dict_id_porcentajes[id]])
-            Costo_i.append([dict_id_precio[id]])
-            P_i.append([dict_id_cont_proteina[id]])
-            AA_ij.append(dict_id_amino[id])
+            for id in id_ingredientes_seleccionados:
+                D_i.append([dict_id_digest_proteina[id]])
+                W_i.append([dict_id_porcentajes[id]])
+                Costo_i.append([dict_id_precio[id]])
+                P_i.append([dict_id_cont_proteina[id]])
+                AA_ij.append(dict_id_amino[id])
 
-        
-        req_AA = [[requerimiento_aminoacidos_esenciales[j] for j in requerimiento_aminoacidos_esenciales.keys()]] # Requerimientos de amonoacidos esenciales
-        
-        D = np.array(D_i)
-        W = np.array(W_i)/100
-        C = np.array(Costo_i)
-        P = np.array(P_i)/100
-        AA = np.array(AA_ij)
-        rAA = np.array(req_AA)
-        
+            
+            req_AA = [[requerimiento_aminoacidos_esenciales[j] for j in requerimiento_aminoacidos_esenciales.keys()]] # Requerimientos de amonoacidos esenciales
+            
+            D = np.array(D_i)
+            W = np.array(W_i)/100
+            C = np.array(Costo_i)
+            P = np.array(P_i)/100
+            AA = np.array(AA_ij)
+            rAA = np.array(req_AA)
+            
 
-        #---------------------------------------------------------------------------------------
-        # Calculo del costo de la materia prima
-        costo_por_kg = np.dot(W.transpose(),C)[0,0]
+            #---------------------------------------------------------------------------------------
+            # Calculo del costo de la materia prima
+            costo_por_kg = np.dot(W.transpose(),C)[0,0]
 
-        #----------------------------------------------------
-        # Contenido proteico
-        print(P)
+            #----------------------------------------------------
+            # Contenido proteico
+            print(P)
 
-        #----------------------------------------------------
-        # Fracción de cada proteína presente en la mezcla
-        WP = W*P
-        print(WP)
-        print('Proteína total en un gr de mezcla')
-        P_mezcla = WP.sum()
-        print(P_mezcla)
+            #----------------------------------------------------
+            # Fracción de cada proteína presente en la mezcla
+            WP = W*P
+            print(WP)
+            print('Proteína total en un gr de mezcla')
+            P_mezcla = WP.sum()
+            print(P_mezcla)
 
-        #---------------------------------------------------------------------------------------
-        # Calculo de la digestigilidad promedio de la mezcla
-        Dm = (np.dot(WP.transpose(),D)/P_mezcla)[0,0]
-        print('Digestibilidad promedio')
-        print(Dm)
+            #---------------------------------------------------------------------------------------
+            # Calculo de la digestigilidad promedio de la mezcla
+            Dm = (np.dot(WP.transpose(),D)/P_mezcla)[0,0]
+            print('Digestibilidad promedio')
+            print(Dm)
 
-        #--------------------------------------------------------------------------------------
-        # mg del j-esimo Aminoacido esencial para cada gramo del ingrediente i
-        print(AA)
-        
-        #--------------------------------------------------------------------------------------
-        # mg del j-esimo Aminoacido esencial en cada gramo de mezcla
-        AA_mezcla = np.dot(P.transpose(),AA)
-        print(AA_mezcla)
+            #--------------------------------------------------------------------------------------
+            # mg del j-esimo Aminoacido esencial para cada gramo del ingrediente i
+            print('mg de Aminoácido por cada gr de ingredietne i')
+            print(AA)
+            
+            #--------------------------------------------------------------------------------------
+            # mg del j-esimo Aminoacido esencial en cada gramo de mezcla
+            print('mgr de Aminoacidos por gr de mezcla')
+            AA_mezcla = np.dot(WP.transpose(),AA)
+            print(AA_mezcla)
 
-        #--------------------------------------------------------------------------------------
-        # calculo de los ASS_j
-        AAS = np.divide((AA_mezcla / P_mezcla) , rAA)
-        print('Puntuación de Aminoácidos (AAS)')
-        print(AAS)
+            #--------------------------------------------------------------------------------------
+            # calculo de los ASS_j
+            AAS = np.divide((AA_mezcla / P_mezcla) , rAA)
+            print('Puntuación de Aminoácidos (AAS)')
+            print(AAS)
 
-        PDCAAS = AAS.min() * Dm
+            PDCAAS = AAS.min() * Dm
 
-        wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla=AA_mezcla ,puntaje_aminoacidos=AAS, digestibilidad=Dm, PDCAAS=PDCAAS)
+            wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, digestibilidad=Dm, PDCAAS=PDCAAS)
 
-        wb.save('./resultados_calculos_ejemplo.xlsx')
+            wb.save('./resultados_calculos_ejemplo.xlsx')
 
-        return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=dict_id_porcentajes,
-                            aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
-                            score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
-                            porcentaje_total=porcentaje_total)
+            return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=dict_id_porcentajes,
+                                aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
+                                score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
+                                porcentaje_total=porcentaje_total)
 
     
     return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=False,
