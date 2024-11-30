@@ -371,16 +371,20 @@ def mezcla_manual():
 
             wb.save('./resultados_calculos_ejemplo.xlsx')
 
+            score_proteico = round(PDCAAS,5)
+
+            costo_kg_prot_asimilable = round(costo_por_kg/(score_proteico*P_mezcla), 2)
+
             return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=dict_id_porcentajes,
                                 aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
-                                score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
-                                porcentaje_total=porcentaje_total)
+                                score_proteico=score_proteico, costo_por_kg=costo_por_kg, fraccion_proteina=P_mezcla,
+                                porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=costo_kg_prot_asimilable)
 
     
     return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=False,
                             aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
-                            score_proteico=score_proteico, costo_por_kg=costo_por_kg, 
-                            porcentaje_total=porcentaje_total)
+                            score_proteico=score_proteico, costo_por_kg=costo_por_kg, fraccion_proteina=None, 
+                            porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=None)
 
 # Descarga de resultado y cálculos de mezcla manual
 @app.route('/descargar-mezcla-manual')
