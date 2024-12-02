@@ -1,154 +1,174 @@
 {% extends "layout.html" %}
 {% block body %}
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mezcla Manual de Ingredientes</title>
-    <style>
-        table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
-            padding: 10px;
-        }
-    </style>
     <!-- Incluimos Mathjax para renderizar código Latex -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js"></script>
-
 </head>
 <body>
-    <h1>Mezclado Manual de Ingredientes</h1>
+<div class="container mt-5">
+    <!-- Título principal -->
+    <h1 class="text-center text-primary mb-4">Mezcla Manual de Ingredientes</h1>
     
-    <table>
-        <h2><caption>Requerimiento de Aminoácidos Escenciales [mg/gr de proteína]</caption></h2>
-        <tr></tr>
-        {% for aminoacido in aminoacidos %}
-            <td>{{ aminoacido }}</td>
-        {% endfor %}
-        </tr>
+    <!-- Tabla de aminoácidos -->
+    <div class="card shadow-lg mb-4">
+        <div class="card-header bg-info text-white">
+            <h2 class="text-center">Requerimiento de Aminoácidos Escenciales</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered text-center">
+                <thead class="table-light">
+                    <tr>
+                        {% for aminoacido in aminoacidos %}
+                            <th>{{ aminoacido }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for aminoacido in aminoacidos %}
+                            <td>{{ referencia_aminoacidos[aminoacido] }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+            <p class="text-center"><a href="https://scielo.isciii.es/scielo.php?script=sci_arttext&pid=S0212-16112006000100009" class="btn btn-link">Referencia Aminoácidos Escenciales (ver)</a></p>
+        </div>
+    </div>
 
-        <tr></tr>
-        {% for aminoacido in aminoacidos %}
-            <td>{{ referencia_aminoacidos[aminoacido] }}</td>
-        {% endfor %}
-        </tr>
-    </table>
-
-    <a href="https://scielo.isciii.es/scielo.php?script=sci_arttext&pid=S0212-16112006000100009">Referencia Aminoácidos Escenciales (ver)</a>
-    
-
-
-    <br>
+    <!-- Formulario de ingredientes -->
     <form method="POST" action="{{ url_for('mezcla_manual') }}">
-        <table>
-            <h2><caption>Selección de % de ingredientes</caption></h2>
-            <tr>
-                <th>Ingrediente</th>
-                <th>Digestibilidad de la Proteína</th>
-                <th>Porcentaje en Mezcla (%)</th>
-            </tr>
-            {% for ingrediente in ingredientes %}
-            <tr>
-                <td>{{ ingrediente[1] }}</td>
-                <td>
-                    <input type="number" step="0.01" name="digestibilidad" 
-                           value="{{ digestibilidades[ingrediente[0]] }}" 
-                           min="0" max="1">
-                </td>
-                <td>
-                    <input type="number" step="1.0" name="porcentaje" 
-                           value="{{ porcentajes_num[ingrediente[0]] }}" 
-                           min="0" max="100">
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-        
-        <br>
-        
-        <button type="submit">Calcular</button>
+        <div class="card shadow-lg mb-4">
+            <div class="card-header bg-success text-white">
+                <h2 class="text-center">Selección de % de Ingredientes</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Ingrediente</th>
+                            <th>Digestibilidad de la Proteína</th>
+                            <th>Porcentaje en Mezcla (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ingrediente in ingredientes %}
+                        <tr>
+                            <td>{{ ingrediente[1] }}</td>
+                            <td>
+                                <input type="number" step="0.01" name="digestibilidad" 
+                                       value="{{ digestibilidades[ingrediente[0]] }}" 
+                                       min="0" max="1" class="form-control">
+                            </td>
+                            <td>
+                                <input type="number" step="1.0" name="porcentaje" 
+                                       value="{{ porcentajes_num[ingrediente[0]] }}" 
+                                       min="0" max="100" class="form-control">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-primary">Calcular</button>
+            </div>
+        </div>
     </form>
 
-    <h2>Resultados</h2>
-    <p><strong>Porcentaje Total:</strong> {{ porcentaje_total }}%</p>
-    <p><strong>Score Proteico:</strong> {{ score_proteico }}</p>
-    <p><strong>Costo por kg de Mezcla:</strong> ${{ costo_por_kg }}</p>
-    <p><strong>Fracción de Proteína:</strong> {{ fraccion_proteina }}</p>
-    <p><strong>Costo por kg de proteína asimilable:</strong> ${{ costo_kg_prot_asimilable }}</p>
+    <!-- Resultados -->
+    <div class="card shadow-lg mb-4">
+        <div class="card-header bg-warning text-white">
+            <h2 class="text-center">Resultados</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>Porcentaje Total:</strong> {{ porcentaje_total }}%</p>
+            <p><strong>Score Proteico:</strong> {{ score_proteico }}</p>
+            <p><strong>Costo por kg de Mezcla:</strong> ${{ costo_por_kg }}</p>
+            <p><strong>Fracción de Proteína:</strong> {{ fraccion_proteina }}</p>
+            <p><strong>Costo por kg de proteína asimilable:</strong> ${{ costo_kg_prot_asimilable }}</p>
+            <p class="text-center">
+                <a href="{{url_for('descargar_resultados_manual')}}" class="btn btn-outline-info">Descargar Resultados (Excel)</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Navegación -->
+    <div class="mb-4">
+        <div class="text-center">
+            <a href="{{ url_for('seleccion_app') }}" class="btn btn-secondary me-2">Volver al Selector de Módulo</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">Cerrar sesión</a>
+        </div>
+    </div>
 
 
-    <h2>Últimos calculos tabulados (Excel)</h2>
-    <p> <a href="{{url_for('descargar_resultados_manual')}}">Desacargar</a></p>
 
+    <div class="card shadow-lg mb-4">
+        <div class="card-header bg-info text-white">
+            <h1>Algoritmo utilizado para Calcular el PDCAAS de la Mezcla de Ingredientes</h1>
+        </div>
 
-    <br>
-    <hr>
+        <div class="card-body">
+            <h2>Paso 1: Obtener el perfil de aminoácidos y la digestibilidad de cada ingrediente</h2>
+            <p>
+                Para cada ingrediente \( i \) (donde \( i = 1, 2, \dots, N \)), se necesita:
+            </p>
+            <ul>
+                <li>\( AA_{i,j} \): La cantidad de cada aminoácido esencial (como lisina, metionina, etc.) por gramo de proteína, donde \( j \) representa el tipo de aminoácido.</li>
+                <li>\( P_i \): El contenido total de proteína en gramos por 100 gramos del ingrediente.</li>
+                <li>\( D_i \): El factor de digestibilidad de la proteína del ingrediente \( i \), que suele darse como un valor entre 0 y 1.</li>
+            </ul>
 
-    <a href='{{ url_for('seleccion_app') }}'>Volver</a>
+            <h2>Paso 2: Calcular el contenido de aminoácidos en la mezcla</h2>
+            <p>
+                Para cada aminoácido \( j \), calcula la cantidad total en la mezcla basada en los ingredientes, su composición de proteínas
+                y sus respectivas proporciones \( W_i \), donde \( W_i \) es la fracción de cada ingrediente en la mezcla.
+                La cantidad total de cada aminoácido en la mezcla es:
+            </p>
+            \[
+            AA_{\text{mezcla}, j} = \sum_{i=1}^{N} W_i \cdot P_i \cdot AA_{i,j}
+            \]
+            <p>
+                Asimismo, calcula el contenido total de proteína en la mezcla:
+            </p>
+            \[
+            P_{\text{mezcla}} = \sum_{i=1}^{N} W_i \cdot P_i
+            \]
 
-    <br>
+            <h2>Paso 3: Calcular la digestibilidad de la proteína en la mezcla</h2>
+            <p>
+                La digestibilidad total de la mezcla, \( D_{\text{mezcla}} \), es la media ponderada de la digestibilidad de cada ingrediente, ponderada por el contenido de proteína de cada ingrediente en la mezcla:
+            </p>
+            \[
+            D_{\text{mezcla}} = \frac{\sum_{i=1}^{N} W_i \cdot P_i \cdot D_i}{P_{\text{mezcla}}}
+            \]
 
-    <a href='{{ url_for('logout') }}'>Cerrar sesión</a>
-    
-    <br>
-    <hr>
-
-    <h1>Algoritmo utilizado para Calcular el PDCAAS de la Mezcla de Ingredientes</h1>
-    
-    <h2>Paso 1: Obtener el perfil de aminoácidos y la digestibilidad de cada ingrediente</h2>
-    <p>
-        Para cada ingrediente \( i \) (donde \( i = 1, 2, \dots, N \)), se necesita:
-    </p>
-    <ul>
-        <li>\( AA_{i,j} \): La cantidad de cada aminoácido esencial (como lisina, metionina, etc.) por gramo de proteína, donde \( j \) representa el tipo de aminoácido.</li>
-        <li>\( P_i \): El contenido total de proteína en gramos por 100 gramos del ingrediente.</li>
-        <li>\( D_i \): El factor de digestibilidad de la proteína del ingrediente \( i \), que suele darse como un valor entre 0 y 1.</li>
-    </ul>
-
-    <h2>Paso 2: Calcular el contenido de aminoácidos en la mezcla</h2>
-    <p>
-        Para cada aminoácido \( j \), calcula la cantidad total en la mezcla basada en los ingredientes, su composición de proteínas
-         y sus respectivas proporciones \( W_i \), donde \( W_i \) es la fracción de cada ingrediente en la mezcla.
-         La cantidad total de cada aminoácido en la mezcla es:
-    </p>
-    \[
-    AA_{\text{mezcla}, j} = \sum_{i=1}^{N} W_i \cdot P_i \cdot AA_{i,j}
-    \]
-    <p>
-        Asimismo, calcula el contenido total de proteína en la mezcla:
-    </p>
-    \[
-    P_{\text{mezcla}} = \sum_{i=1}^{N} W_i \cdot P_i
-    \]
-
-    <h2>Paso 3: Calcular la digestibilidad de la proteína en la mezcla</h2>
-    <p>
-        La digestibilidad total de la mezcla, \( D_{\text{mezcla}} \), es la media ponderada de la digestibilidad de cada ingrediente, ponderada por el contenido de proteína de cada ingrediente en la mezcla:
-    </p>
-    \[
-    D_{\text{mezcla}} = \frac{\sum_{i=1}^{N} W_i \cdot P_i \cdot D_i}{P_{\text{mezcla}}}
-    \]
-
-    <h2>Paso 4: Determinar el aminoácido limitante en la mezcla</h2>
-    <p>
-        Se compara la proporción de cada aminoácido esencial \( j \) en la mezcla con el requerimiento de aminoácidos para la población de referencia.
-        El requerimiento de cada aminoácido se encuentra expresado en mg por gr de proteína de la mezcla.
-    </p>
-    <p>
-        La puntuación de aminoácidos (AAS) de cada aminoácido \( j \) se calcula como:
-    </p>
-    \[
-    \text{AAS}_j = \frac{AA_{\text{mezcla}, j}/P_{\text{mezcla}}}{\text{requerimiento}_{j}}
-    \]
-   
-    <h2>Paso 5: Calcular el PDCAAS de la mezcla</h2>
-    <p>El valor de \( \text{AAS} \) más bajo indica el aminoácido limitante de la mezcla. Finalmente, el PDCAAS de la mezcla se calcula como:
-    </p>
-    \[
-    \text{PDCAAS} = \min_{j} \{\text{AAS}_{j} \} \cdot D_{\text{mezcla}}
-    \]
-    <p>Si el resultado es mayor que 1, se ajusta a 1, ya que el PDCAAS máximo permitido es 1.</p>
-
-    
+            <h2>Paso 4: Determinar el aminoácido limitante en la mezcla</h2>
+            <p>
+                Se compara la proporción de cada aminoácido esencial \( j \) en la mezcla con el requerimiento de aminoácidos para la población de referencia.
+                El requerimiento de cada aminoácido se encuentra expresado en mg por gr de proteína de la mezcla.
+            </p>
+            <p>
+                La puntuación de aminoácidos (AAS) de cada aminoácido \( j \) se calcula como:
+            </p>
+            \[
+            \text{AAS}_j = \frac{AA_{\text{mezcla}, j}/P_{\text{mezcla}}}{\text{requerimiento}_{j}}
+            \]
+        
+            <h2>Paso 5: Calcular el PDCAAS de la mezcla</h2>
+            <p>El valor de \( \text{AAS} \) más bajo indica el aminoácido limitante de la mezcla. Finalmente, el PDCAAS de la mezcla se calcula como:
+            </p>
+            \[
+            \text{PDCAAS} = \min_{j} \{\text{AAS}_{j} \} \cdot D_{\text{mezcla}}
+            \]
+            <p>Si el resultado es mayor que 1, se ajusta a 1, ya que el PDCAAS máximo permitido es 1.</p>
+        </div>
+    </div>
+</div>    
 </body>
 </html>
 {% endblock %}
