@@ -1,11 +1,13 @@
 import numpy as np
-from flask import Flask, request, redirect, url_for, render_template, flash, send_file
+from flask import Flask, request, jsonify, redirect, url_for, render_template, flash, send_file
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from ingredientes import conectar, tabla_existe, crear_tabla, inicializar_tabla_ingredientes, agregar_ingrediente, obtener_ingrediente, obtener_info_ingrediente, modificar_ingrediente, borrar_ingrediente
 
 from excel_output import crear_tabla_calculos
+
+import requests
 
 
 ## Defino los contenidos de referencia de los distintos aminoacidos
@@ -532,7 +534,8 @@ def mezcla_optima():
             
             
             D_i = [] # Vector Digestibilidad de la proteína de cada ingrediente
-            W_i = [] # Vector Porcentajes de Ingrediente
+            W_i_min = [] # Vector Porcentajes Minimos de Ingrediente
+            W_i_max = [] # Vector Porcentajes Maximos de Ingrediente
             Costo_i = [] # Vector Costo de ingredientes
             P_i = [] # Vector Composición Proteica de Ingredientes por gr de ingrediente
             AA_ij = [] # Matriz del j-esimo Amino Ácidos del ingrediente i
@@ -541,7 +544,8 @@ def mezcla_optima():
             for id in id_ingredientes_seleccionados:
                 D_i.append([dict_id_digest_proteina[id]])
 
-                #W_i.append([dict_id_porcentajes[id]])
+                W_i_min.append([dict_id_porcentajes_min[id]])
+                W_i_max.append([dict_id_porcentajes_max[id]])
 
                 Costo_i.append([dict_id_precio[id]])
                 P_i.append([dict_id_cont_proteina[id]])
@@ -611,6 +615,26 @@ def mezcla_optima():
             costo_kg_prot_asimilable = 0
             dict_id_porcentajes = dict_id_porcentajes_max
 
+            url_servicio_mezcla_optima = 'http://localhost:8000/problema_mezcla'
+            data = {"ingredientes": id_ingredientes_seleccionados,
+                    "digestibilidad":D_i,
+                    "costo":Costo_i,
+                    "proteina": P_i,
+                    "aminoacidos":AA_ij,
+                    "porcentaje_min":W_i_min,
+                    "porcentaje_max":W_i_max}
+            
+            try:
+                respuesta = requests.post(url_servicio_mezcla_optima, json=data)
+                print('La respuesta del servicio de Mezcla Óptima fue:')
+                if respuesta.status_code == 200:
+                    print(respuesta.content)
+                
+            except:
+                print('Error en la consulta web')
+            
+
+
             return render_template('mezcla_optima.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=dict_id_porcentajes,
                                 aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
                                 score_proteico=score_proteico, costo_por_kg=costo_por_kg, fraccion_proteina=P_mezcla,
@@ -627,4 +651,4 @@ def mezcla_optima():
 
 # Punto de entrada de la aplicación
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000) #  
