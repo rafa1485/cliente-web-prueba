@@ -419,6 +419,7 @@ def mezcla_optima():
 
     cursor.execute("SELECT id, nombre FROM ingredientes")
     ingredientes = cursor.fetchall()
+    ingredientes_id_str = [(str(id),nombre) for id,nombre in ingredientes]
 
     cursor.execute("SELECT id, digestibilidad_proteica FROM ingredientes")
     digestibilidades = cursor.fetchall()
@@ -432,6 +433,8 @@ def mezcla_optima():
 
     if request.method == 'POST':
 
+        lista_ingredientes = [str(id) for id,_ in ingredientes]
+
         porcentajes_min = request.form.getlist('porcentaje_min')
         print('porcentajes_min')
         print(porcentajes_min)
@@ -439,7 +442,7 @@ def mezcla_optima():
         # obtengo los porcentajes minimos en mezcla y creo un diccionario que vincula cada ingrediente
         # dado por su 'id' con el porcentaje minimo correspondiente
         porcentajes_num_min = [int(x) if x != '' else 0 for x in porcentajes_min]
-        lista_ingredientes = [id for id,_ in ingredientes]
+        
         dict_id_porcentajes_min = dict(zip(lista_ingredientes,porcentajes_num_min))
         print(dict_id_porcentajes_min)
 
@@ -450,7 +453,7 @@ def mezcla_optima():
         # obtengo los porcentajes minimos en mezcla y creo un diccionario que vincula cada ingrediente
         # dado por su 'id' con el porcentaje minimo correspondiente
         porcentajes_num_max = [int(x) if x != '' else 0 for x in porcentajes_max]
-        lista_ingredientes = [id for id,_ in ingredientes]
+        
         dict_id_porcentajes_max = dict(zip(lista_ingredientes,porcentajes_num_max))
         print(dict_id_porcentajes_max)
 
@@ -487,7 +490,7 @@ def mezcla_optima():
             for id_ingrediente_seleccionado in id_ingredientes_seleccionados:
                 porcentaje_str_min = str(dict_id_porcentajes_min[id_ingrediente_seleccionado])
                 porcentaje_str_max = str(dict_id_porcentajes_max[id_ingrediente_seleccionado])
-                ingrediente_info = obtener_info_ingrediente(id_ingrediente_seleccionado)
+                ingrediente_info = obtener_info_ingrediente(int(id_ingrediente_seleccionado))
                 
                 if ingrediente_info:
                     print('porcentaje min: '+ porcentaje_str_min)
@@ -567,7 +570,8 @@ def mezcla_optima():
 
             
             req_AA = [[requerimiento_aminoacidos_esenciales[j] for j in requerimiento_aminoacidos_esenciales.keys()]] # Requerimientos de amonoacidos esenciales
-            
+
+
             D = np.array(D_i)
             #W = np.array(W_i)/100
             C = np.array(Costo_i)
@@ -641,7 +645,8 @@ def mezcla_optima():
                     "indices_contenido_aminoacidos":dict_n_indices,
                     "valores_contenido_aminoacidos": dict_n_aminoacidos,
                     "porcentaje_min":W_min,
-                    "porcentaje_max":W_max}
+                    "porcentaje_max":W_max,
+                    "requerimiento_aminoacidos_esenciales":requerimiento_aminoacidos_esenciales}
             
             #print(data)
             #print('---------------------')
@@ -663,13 +668,13 @@ def mezcla_optima():
             
 
 
-            return render_template('mezcla_optima.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num_min=dict_id_porcentajes_min,
+            return render_template('mezcla_optima.html', ingredientes=ingredientes_id_str, digestibilidades=dict_id_digestibilidades, porcentajes_num_min=dict_id_porcentajes_min,
                                 porcentajes_num_max=dict_id_porcentajes_max, aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
                                 score_proteico=score_proteico, costo_por_kg=costo_por_kg, fraccion_proteina=P_mezcla,
                                 porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=costo_kg_prot_asimilable)
 
     
-    return render_template('mezcla_optima.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num_min=False,
+    return render_template('mezcla_optima.html', ingredientes=ingredientes_id_str, digestibilidades=dict_id_digestibilidades, porcentajes_num_min=False,
                             porcentajes_num_max=False, aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
                             score_proteico=score_proteico, costo_por_kg=costo_por_kg, fraccion_proteina=None, 
                             porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=None)
