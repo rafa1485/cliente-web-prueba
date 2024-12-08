@@ -9,6 +9,8 @@ from excel_output import crear_tabla_calculos
 
 import requests
 
+import json
+
 
 ## Defino los contenidos de referencia de los distintos aminoacidos
 requerimiento_aminoacidos_esenciales = {'histidina':18, 'isoleucina':25, 'leucina':55, 'lisina':51, 'metionina':25, 'fenilalanina':47, 'treonina':27, 'triptofano':7, 'valina':32}
@@ -534,22 +536,34 @@ def mezcla_optima():
             
             
             D_i = [] # Vector Digestibilidad de la proteína de cada ingrediente
-            W_i_min = [] # Vector Porcentajes Minimos de Ingrediente
-            W_i_max = [] # Vector Porcentajes Maximos de Ingrediente
             Costo_i = [] # Vector Costo de ingredientes
             P_i = [] # Vector Composición Proteica de Ingredientes por gr de ingrediente
             AA_ij = [] # Matriz del j-esimo Amino Ácidos del ingrediente i
+
+            dict_aminoacidos = {}
             
 
             for id in id_ingredientes_seleccionados:
                 D_i.append([dict_id_digest_proteina[id]])
-
-                W_i_min.append([dict_id_porcentajes_min[id]])
-                W_i_max.append([dict_id_porcentajes_max[id]])
-
                 Costo_i.append([dict_id_precio[id]])
                 P_i.append([dict_id_cont_proteina[id]])
                 AA_ij.append(dict_id_amino[id])
+                for n_aa, valor_aa in enumerate(dict_id_amino[id]):
+                    dict_aminoacidos.update({(id,aminoacidos[n_aa]):valor_aa})
+            
+            # Si bien, hemos creado un objeto diccionario que representa la matriz AA_ij,
+            # la forma de representar los datos no es compatible con el formato JSON
+            # ya que estamos usando una tupla como indice del diccionario.
+            # Mantenemos por ahora el diccionario con la estuctura original, pero
+            # en un futuro podría eliminarse.
+
+            # Reestructuración de la información del diccionario en dos diccionarios separados.
+            dict_n_indices = {}
+            dict_n_aminoacidos = {}
+            for n,k in enumerate(dict_aminoacidos.keys()):
+                valor_aa=dict_aminoacidos[k]
+                dict_n_indices.update({n:k})
+                dict_n_aminoacidos.update({n:valor_aa})
 
             
             req_AA = [[requerimiento_aminoacidos_esenciales[j] for j in requerimiento_aminoacidos_esenciales.keys()]] # Requerimientos de amonoacidos esenciales
@@ -615,14 +629,28 @@ def mezcla_optima():
             costo_kg_prot_asimilable = 0
             dict_id_porcentajes = dict_id_porcentajes_max
 
+            W_min = {k:dict_id_porcentajes_min[k] for k in dict_id_porcentajes_min.keys() if k in  id_ingredientes_seleccionados}
+            W_max = {k:dict_id_porcentajes_max[k] for k in dict_id_porcentajes_max.keys() if k in  id_ingredientes_seleccionados}
+
             url_servicio_mezcla_optima = 'http://localhost:8000/problema_mezcla'
             data = {"ingredientes": id_ingredientes_seleccionados,
-                    "digestibilidad":D_i,
-                    "costo":Costo_i,
-                    "proteina": P_i,
-                    "aminoacidos":AA_ij,
-                    "porcentaje_min":W_i_min,
-                    "porcentaje_max":W_i_max}
+                    "nombres_aminoacidos": aminoacidos,
+                    "digestibilidad":dict_id_digest_proteina,
+                    "costo_ingredientes":dict_id_precio,
+                    "contenido_proteinas": dict_id_cont_proteina,
+                    "indices_contenido_aminoacidos":dict_n_indices,
+                    "valores_contenido_aminoacidos": dict_n_aminoacidos,
+                    "porcentaje_min":W_min,
+                    "porcentaje_max":W_max}
+            
+            #print(data)
+            #print('---------------------')
+            #breakpoint()
+            json_string = json.dumps(data, indent=4)
+            #print('---------------------')
+            print(json_string)
+            #print('---------------------')
+            
             
             try:
                 respuesta = requests.post(url_servicio_mezcla_optima, json=data)
@@ -635,14 +663,14 @@ def mezcla_optima():
             
 
 
-            return render_template('mezcla_optima.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=dict_id_porcentajes,
-                                aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
+            return render_template('mezcla_optima.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num_min=dict_id_porcentajes_min,
+                                porcentajes_num_max=dict_id_porcentajes_max, aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
                                 score_proteico=score_proteico, costo_por_kg=costo_por_kg, fraccion_proteina=P_mezcla,
                                 porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=costo_kg_prot_asimilable)
 
     
-    return render_template('mezcla_optima.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=False,
-                            aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
+    return render_template('mezcla_optima.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num_min=False,
+                            porcentajes_num_max=False, aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
                             score_proteico=score_proteico, costo_por_kg=costo_por_kg, fraccion_proteina=None, 
                             porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=None)
 
