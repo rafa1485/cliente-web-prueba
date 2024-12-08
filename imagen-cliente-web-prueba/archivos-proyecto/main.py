@@ -569,69 +569,7 @@ def mezcla_optima():
                 dict_n_aminoacidos.update({n:valor_aa})
 
             
-            req_AA = [[requerimiento_aminoacidos_esenciales[j] for j in requerimiento_aminoacidos_esenciales.keys()]] # Requerimientos de amonoacidos esenciales
-
-
-            D = np.array(D_i)
-            #W = np.array(W_i)/100
-            C = np.array(Costo_i)
-            P = np.array(P_i)/100
-            AA = np.array(AA_ij)
-            rAA = np.array(req_AA)
             
-
-            #---------------------------------------------------------------------------------------
-            # Calculo del costo de la materia prima
-            #costo_por_kg = np.dot(W.transpose(),C)[0,0]
-
-            #----------------------------------------------------
-            # Contenido proteico
-            print(P)
-
-            #----------------------------------------------------
-            # Fracción de cada proteína presente en la mezcla
-            #WP = W*P
-            #print(WP)
-            print('Proteína total en un gr de mezcla')
-            #P_mezcla = WP.sum()
-            P_mezcla = 0
-            print(P_mezcla)
-
-            #---------------------------------------------------------------------------------------
-            # Calculo de la digestigilidad promedio de la mezcla
-            #Dm = (np.dot(WP.transpose(),D)/P_mezcla)[0,0]
-            print('Digestibilidad promedio')
-            #print(Dm)
-
-            #--------------------------------------------------------------------------------------
-            # mg del j-esimo Aminoacido esencial para cada gramo del ingrediente i
-            print('mg de Aminoácido por cada gr de ingredietne i')
-            print(AA)
-            
-            #--------------------------------------------------------------------------------------
-            # mg del j-esimo Aminoacido esencial en cada gramo de mezcla
-            print('mgr de Aminoacidos por gr de mezcla')
-            #AA_mezcla = np.dot(WP.transpose(),AA)
-            #print(AA_mezcla)
-
-            #--------------------------------------------------------------------------------------
-            # calculo de los ASS_j
-            #AAS = np.divide((AA_mezcla / P_mezcla) , rAA)
-            print('Puntuación de Aminoácidos (AAS)')
-            #print(AAS)
-
-            #PDCAAS = AAS.min() * Dm
-
-            #wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, digestibilidad=Dm, PDCAAS=PDCAAS)
-
-            #wb.save('./resultados_calculos_ejemplo.xlsx')
-
-            #score_proteico = round(PDCAAS,5)
-
-            #costo_kg_prot_asimilable = round(costo_por_kg/(score_proteico*P_mezcla), 2)
-            P_mezcla = 0
-            costo_kg_prot_asimilable = 0
-            dict_id_porcentajes = dict_id_porcentajes_max
 
             W_min = {k:dict_id_porcentajes_min[k] for k in dict_id_porcentajes_min.keys() if k in  id_ingredientes_seleccionados}
             W_max = {k:dict_id_porcentajes_max[k] for k in dict_id_porcentajes_max.keys() if k in  id_ingredientes_seleccionados}
@@ -662,6 +600,79 @@ def mezcla_optima():
                 print('La respuesta del servicio de Mezcla Óptima fue:')
                 if respuesta.status_code == 200:
                     print(respuesta.content)
+                    respuesta_json = respuesta.json()
+                    dict_W = json.loads(respuesta_json['porcentajes_mezcla'])
+                    W_i = [[dict_W[id]] for id in id_ingredientes_seleccionados]
+                    print(W_i)
+                    
+                    # Suponiendo que obtenemos los porcentajes de mezclado W,
+                    # Realizamos los calculos de las caracteristicas de la mezcla
+                    # en forma matricial como haciamos en el mezclado manual.
+
+                    req_AA = [[requerimiento_aminoacidos_esenciales[j] for j in requerimiento_aminoacidos_esenciales.keys()]] # Requerimientos de amonoacidos esenciales
+
+
+                    D = np.array(D_i)
+                    W = np.array(W_i)/100
+                    C = np.array(Costo_i)
+                    P = np.array(P_i)/100
+                    AA = np.array(AA_ij)
+                    rAA = np.array(req_AA)
+
+                    #---------------------------------------------------------------------------------------
+                    # Calculo del costo de la materia prima
+                    costo_por_kg = np.dot(W.transpose(),C)[0,0]
+
+                    #----------------------------------------------------
+                    # Contenido proteico
+                    print(P)
+
+                    #----------------------------------------------------
+                    # Fracción de cada proteína presente en la mezcla
+                    WP = W*P
+                    print(WP)
+                    print('Proteína total en un gr de mezcla')
+                    P_mezcla = WP.sum()
+                    #P_mezcla = 0
+                    print(P_mezcla)
+
+                    #---------------------------------------------------------------------------------------
+                    # Calculo de la digestigilidad promedio de la mezcla
+                    Dm = (np.dot(WP.transpose(),D)/P_mezcla)[0,0]
+                    print('Digestibilidad promedio')
+                    print(Dm)
+
+                    #--------------------------------------------------------------------------------------
+                    # mg del j-esimo Aminoacido esencial para cada gramo del ingrediente i
+                    print('mg de Aminoácido por cada gr de ingredietne i')
+                    print(AA)
+                    
+                    #--------------------------------------------------------------------------------------
+                    # mg del j-esimo Aminoacido esencial en cada gramo de mezcla
+                    print('mgr de Aminoacidos por gr de mezcla')
+                    AA_mezcla = np.dot(WP.transpose(),AA)
+                    print(AA_mezcla)
+
+                    #--------------------------------------------------------------------------------------
+                    # calculo de los ASS_j
+                    AAS = np.divide((AA_mezcla / P_mezcla) , rAA)
+                    print('Puntuación de Aminoácidos (AAS)')
+                    print(AAS)
+
+                    PDCAAS = AAS.min() * Dm
+
+                    #wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, digestibilidad=Dm, PDCAAS=PDCAAS)
+
+                    #wb.save('./resultados_calculos_ejemplo.xlsx')
+                    
+                    porcentaje_total = 100*(sum(W))[0]
+
+                    score_proteico = round(PDCAAS,5)
+
+                    costo_kg_prot_asimilable = round(costo_por_kg/(score_proteico*P_mezcla), 2)
+                    #P_mezcla = 0
+                    #costo_kg_prot_asimilable = 0
+                    dict_id_porcentajes = dict_W
                 
             except:
                 print('Error en la consulta web')
