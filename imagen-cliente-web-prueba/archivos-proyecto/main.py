@@ -412,6 +412,8 @@ def mezcla_optima():
     score_proteico = 0
     costo_por_kg = 0
     porcentaje_total = 0
+    P_mezcla = 0
+    costo_kg_prot_asimilable = 0
 
     # Muestra todos los ingredientes para seleccionar
     conexion = conectar()
@@ -430,6 +432,8 @@ def mezcla_optima():
 
     # Creo un diccionario de las digestibilidades indexado por el id
     dict_id_digestibilidades = dict(digestibilidades)
+
+    dict_id_str_digestibilidades = {str(k):v for k,v in dict_id_digestibilidades.items() }
 
     if request.method == 'POST':
 
@@ -602,7 +606,7 @@ def mezcla_optima():
                     print(respuesta.content)
                     respuesta_json = respuesta.json()
                     dict_W = json.loads(respuesta_json['porcentajes_mezcla'])
-                    W_i = [[dict_W[id]] for id in id_ingredientes_seleccionados]
+                    W_i = [[dict_W[id]*100] for id in id_ingredientes_seleccionados]
                     print(W_i)
                     
                     # Suponiendo que obtenemos los porcentajes de mezclado W,
@@ -661,31 +665,29 @@ def mezcla_optima():
 
                     PDCAAS = AAS.min() * Dm
 
-                    #wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, digestibilidad=Dm, PDCAAS=PDCAAS)
+                    wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, digestibilidad=Dm, PDCAAS=PDCAAS)
 
-                    #wb.save('./resultados_calculos_ejemplo.xlsx')
+                    wb.save('./resultados_calculos_ejemplo.xlsx')
                     
                     porcentaje_total = 100*(sum(W))[0]
 
                     score_proteico = round(PDCAAS,5)
 
                     costo_kg_prot_asimilable = round(costo_por_kg/(score_proteico*P_mezcla), 2)
-                    #P_mezcla = 0
-                    #costo_kg_prot_asimilable = 0
+                    
                     dict_id_porcentajes = dict_W
                 
             except:
                 print('Error en la consulta web')
             
 
-
-            return render_template('mezcla_optima.html', ingredientes=ingredientes_id_str, digestibilidades=dict_id_digestibilidades, porcentajes_num_min=dict_id_porcentajes_min,
+            return render_template('mezcla_optima.html', ingredientes=ingredientes_id_str, digestibilidades=dict_id_str_digestibilidades, porcentajes_num_min=dict_id_porcentajes_min,
                                 porcentajes_num_max=dict_id_porcentajes_max, aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
                                 score_proteico=score_proteico, costo_por_kg=costo_por_kg, fraccion_proteina=P_mezcla,
                                 porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=costo_kg_prot_asimilable)
 
     
-    return render_template('mezcla_optima.html', ingredientes=ingredientes_id_str, digestibilidades=dict_id_digestibilidades, porcentajes_num_min=False,
+    return render_template('mezcla_optima.html', ingredientes=ingredientes_id_str, digestibilidades=dict_id_str_digestibilidades, porcentajes_num_min=False,
                             porcentajes_num_max=False, aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
                             score_proteico=score_proteico, costo_por_kg=costo_por_kg, fraccion_proteina=None, 
                             porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=None)
