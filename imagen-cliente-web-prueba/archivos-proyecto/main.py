@@ -186,6 +186,8 @@ def mezcla_manual():
     score_proteico = 0
     costo_por_kg = 0
     porcentaje_total = 0
+    digestibilidad = 0
+    pdcaas = 0
 
     # Muestra todos los ingredientes para seleccionar
     conexion = conectar()
@@ -369,25 +371,32 @@ def mezcla_manual():
             print('Puntuación de Aminoácidos (AAS)')
             print(AAS)
 
-            PDCAAS = AAS.min() * Dm
+            digestibilidad = round(Dm*100,1)
 
-            wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, digestibilidad=Dm, PDCAAS=PDCAAS)
+            SCORE_PROTEICO  = AAS.min()
+            score_proteico = round(SCORE_PROTEICO*100, 1)
+
+            PDCAAS =  SCORE_PROTEICO* Dm
+
+            pdcaas = round(PDCAAS*100,1)
+
+            wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, score_proteico=SCORE_PROTEICO, digestibilidad=Dm, PDCAAS=PDCAAS)
 
             wb.save('./resultados_calculos_ejemplo.xlsx')
-
-            score_proteico = round(PDCAAS,5)
+            
+            porcentaje_total = 100*(sum(W))[0]
 
             costo_kg_prot_asimilable = round(costo_por_kg/(score_proteico*P_mezcla), 2)
 
             return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=dict_id_porcentajes,
                                 aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
-                                score_proteico=score_proteico, costo_por_kg=costo_por_kg, fraccion_proteina=P_mezcla,
+                                score_proteico=score_proteico, digestibilidad_mezcla=digestibilidad, PDCAAS=pdcaas, costo_por_kg=costo_por_kg, fraccion_proteina=P_mezcla,
                                 porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=costo_kg_prot_asimilable)
 
     
     return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=False,
                             aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
-                            score_proteico=score_proteico, costo_por_kg=costo_por_kg, fraccion_proteina=None, 
+                            score_proteico=score_proteico, digestibilidad_mezcla=digestibilidad, PDCAAS=pdcaas, costo_por_kg=costo_por_kg, fraccion_proteina=None, 
                             porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=None)
 
 # Descarga de resultado y cálculos de mezcla manual
@@ -414,6 +423,9 @@ def mezcla_optima():
     porcentaje_total = 0
     P_mezcla = 0
     costo_kg_prot_asimilable = 0
+    digestibilidad = 0
+    pdcaas = 0
+    score_proteico = 0
 
     # Muestra todos los ingredientes para seleccionar
     conexion = conectar()
@@ -663,15 +675,20 @@ def mezcla_optima():
                     print('Puntuación de Aminoácidos (AAS)')
                     print(AAS)
 
-                    PDCAAS = AAS.min() * Dm
+                    digestibilidad = round(Dm*100,1)
 
-                    wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, digestibilidad=Dm, PDCAAS=PDCAAS)
+                    SCORE_PROTEICO  = AAS.min()
+                    score_proteico = round(SCORE_PROTEICO*100, 1)
+
+                    PDCAAS =  SCORE_PROTEICO* Dm
+
+                    pdcaas = round(PDCAAS*100,1)
+
+                    wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, score_proteico=SCORE_PROTEICO, digestibilidad=Dm, PDCAAS=PDCAAS)
 
                     wb.save('./resultados_calculos_ejemplo.xlsx')
                     
                     porcentaje_total = 100*(sum(W))[0]
-
-                    score_proteico = round(PDCAAS,5)
 
                     costo_kg_prot_asimilable = round(costo_por_kg/(score_proteico*P_mezcla), 2)
                     
@@ -683,13 +700,13 @@ def mezcla_optima():
 
             return render_template('mezcla_optima.html', ingredientes=ingredientes_id_str, digestibilidades=dict_id_str_digestibilidades, porcentajes_num_min=dict_id_porcentajes_min,
                                 porcentajes_num_max=dict_id_porcentajes_max, aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
-                                score_proteico=score_proteico, costo_por_kg=costo_por_kg, fraccion_proteina=P_mezcla,
+                                score_proteico=score_proteico, digestibilidad_mezcla=digestibilidad, PDCAAS=pdcaas, costo_por_kg=costo_por_kg, fraccion_proteina=P_mezcla,
                                 porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=costo_kg_prot_asimilable)
 
     
     return render_template('mezcla_optima.html', ingredientes=ingredientes_id_str, digestibilidades=dict_id_str_digestibilidades, porcentajes_num_min=False,
                             porcentajes_num_max=False, aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
-                            score_proteico=score_proteico, costo_por_kg=costo_por_kg, fraccion_proteina=None, 
+                            score_proteico=score_proteico, digestibilidad_mezcla=digestibilidad, PDCAAS=pdcaas, costo_por_kg=costo_por_kg, fraccion_proteina=None, 
                             porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=None)
 
 

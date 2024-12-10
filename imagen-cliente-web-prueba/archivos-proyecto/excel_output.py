@@ -4,7 +4,7 @@ import numpy as np
 
 aminoacidos_esenciales = ['histidina', 'isoleucina', 'leucina', 'lisina', 'metionina', 'fenilalanina', 'treonina', 'triptofano', 'valina']
 
-def crear_tabla_calculos(nombres, fraccion_proteina, digestibilidad_proteina, contenido_aminoacidos, requerimientos, porcentajes_mezcla, aminoacidos_mezcla_gr_mezcla, fraccion_proteina_mezcla, puntaje_aminoacidos, digestibilidad, PDCAAS):
+def crear_tabla_calculos(nombres, fraccion_proteina, digestibilidad_proteina, contenido_aminoacidos, requerimientos, porcentajes_mezcla, aminoacidos_mezcla_gr_mezcla, fraccion_proteina_mezcla, puntaje_aminoacidos,  score_proteico, digestibilidad, PDCAAS):
     wb = Workbook()
 
     ws = wb.active
@@ -68,7 +68,7 @@ def crear_tabla_calculos(nombres, fraccion_proteina, digestibilidad_proteina, co
     ws.cell(row=11+len(nombres), column=3).style = 'Headline 2'
     ws.cell(row=11+len(nombres), column=3).alignment = Alignment(horizontal="center", vertical="center", wrapText=True)
     ws.cell(row=12+len(nombres), column=3, value=fraccion_proteina_mezcla)
-    ws.cell(row=12+len(nombres), column=3).number_format = '0.0000'
+    ws.cell(row=12+len(nombres), column=3).number_format = '0.0%'
 
 
     # TABLA 3 - Porcentajes mezcla ingredientes
@@ -118,12 +118,18 @@ def crear_tabla_calculos(nombres, fraccion_proteina, digestibilidad_proteina, co
     ws.cell(row=23+len(nombres), column=5).style = 'Headline 3'
     ws.cell(row=23+len(nombres), column=5).alignment = Alignment(horizontal="center", vertical="center")
     ws.cell(row=24+len(nombres), column=5, value=digestibilidad)
-    ws.cell(row=24+len(nombres), column=5).number_format = '0.0000'
+    ws.cell(row=24+len(nombres), column=5).number_format = '0.0%'
 
-    ws.cell(row=26+len(nombres), column=5, value='PDCAAS')
+    ws.cell(row=26+len(nombres), column=5, value='SCORE PROTEICO')
     ws.cell(row=26+len(nombres), column=5).style = 'Headline 3'
     ws.cell(row=26+len(nombres), column=5).alignment = Alignment(horizontal="center", vertical="center")
-    ws.cell(row=27+len(nombres), column=5, value=PDCAAS)
-    ws.cell(row=27+len(nombres), column=5).number_format = '0.0000'
+    ws.cell(row=27+len(nombres), column=5, value=score_proteico)
+    ws.cell(row=27+len(nombres), column=5).number_format = '0.0%'
+
+    ws.cell(row=29+len(nombres), column=5, value='PDCAAS')
+    ws.cell(row=29+len(nombres), column=5).style = 'Headline 3'
+    ws.cell(row=29+len(nombres), column=5).alignment = Alignment(horizontal="center", vertical="center")
+    ws.cell(row=30+len(nombres), column=5, value=PDCAAS)
+    ws.cell(row=30+len(nombres), column=5).number_format = '0.0%'
 
     return wb
