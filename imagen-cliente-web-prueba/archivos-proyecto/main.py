@@ -208,16 +208,6 @@ def mezcla_manual():
 
     if request.method == 'POST':
 
-        # Cargar datos de la selección y porcentajes
-        #id_ingredientes_seleccionados = request.form.getlist('ingrediente')
-        digestibilidades_form = request.form.getlist('digestibilidad')
-
-        ##TODO Esto debería borrarse, porque no tiene sentido que la digestibilidad se modifique durante la mezcla
-        # obtengo las digestibilidades y actualizo sus valores por si el usuario cambio alguno de los mismos
-        digestibilidades = [(id,float(digestibilidades_form[i])) for i,id in enumerate(dict_id_digestibilidades.keys())]
-        # creo un diccionario que devuelve la digestibilidad para cada ingrediente dado por su id
-        dict_id_digestibilidades = dict(digestibilidades)
-
         porcentajes = request.form.getlist('porcentaje')
         print('porcentajes')
         print(porcentajes)
