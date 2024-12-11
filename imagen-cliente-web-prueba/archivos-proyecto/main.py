@@ -370,13 +370,15 @@ def mezcla_manual():
 
             pdcaas = round(PDCAAS*100,1)
 
-            wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, score_proteico=SCORE_PROTEICO, digestibilidad=Dm, PDCAAS=PDCAAS)
+            titulo = 'MEZCLA MANUAL'
 
-            wb.save('./resultados_calculos_ejemplo.xlsx')
+            wb = crear_tabla_calculos(titulo=titulo, nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, score_proteico=SCORE_PROTEICO, digestibilidad=Dm, PDCAAS=PDCAAS)
+
+            wb.save('./resultados_calculos_mezcla_manual.xlsx')
             
             porcentaje_total = 100*(sum(W))[0]
 
-            costo_kg_prot_asimilable = round(costo_por_kg/(score_proteico*P_mezcla), 2)
+            costo_kg_prot_asimilable = round(costo_por_kg/(PDCAAS*P_mezcla), 2)
 
             return render_template('mezcla_manual.html', ingredientes=ingredientes, digestibilidades=dict_id_digestibilidades, porcentajes_num=dict_id_porcentajes,
                                 aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
@@ -393,7 +395,18 @@ def mezcla_manual():
 @app.route('/descargar-mezcla-manual')
 @login_required
 def descargar_resultados_manual():
-    PATH='resultados_calculos_ejemplo.xlsx'
+    PATH='resultados_calculos_mezcla_manual.xlsx'
+    try:
+        return send_file(PATH, as_attachment=True)
+    except Exception as e:
+        return f"Error al descargar el archivo: {str(e)}", 500
+
+
+# Descarga de resultado y cálculos de mezcla optimizada
+@app.route('/descargar-mezcla-optimizada')
+@login_required
+def descargar_resultados_optimos():
+    PATH='resultados_calculos_mezcla_optimizada.xlsx'
     try:
         return send_file(PATH, as_attachment=True)
     except Exception as e:
@@ -674,13 +687,15 @@ def mezcla_optima():
 
                     pdcaas = round(PDCAAS*100,1)
 
-                    wb = crear_tabla_calculos(nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, score_proteico=SCORE_PROTEICO, digestibilidad=Dm, PDCAAS=PDCAAS)
+                    titulo = 'MEZCLA OPTIMIZADA'
 
-                    wb.save('./resultados_calculos_ejemplo.xlsx')
+                    wb = crear_tabla_calculos(titulo=titulo, nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, score_proteico=SCORE_PROTEICO, digestibilidad=Dm, PDCAAS=PDCAAS)
+
+                    wb.save('./resultados_calculos_mezcla_optimizada.xlsx')
                     
                     porcentaje_total = 100*(sum(W))[0]
 
-                    costo_kg_prot_asimilable = round(costo_por_kg/(score_proteico*P_mezcla), 2)
+                    costo_kg_prot_asimilable = round(costo_por_kg/(PDCAAS*P_mezcla), 2)
                     
                     dict_id_porcentajes = dict_W
                 
