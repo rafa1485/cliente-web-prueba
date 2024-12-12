@@ -8,6 +8,7 @@
     <title>Mezcla Manual de Ingredientes</title>
     <!-- Incluimos Mathjax para renderizar código Latex -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js"></script>
+    
 </head>
 <body>
 <div class="container mt-5">
@@ -113,63 +114,83 @@
 
     <div class="card shadow-lg mb-4">
         <div class="card-header bg-info text-white">
-            <h1>Algoritmo utilizado para Calcular el PDCAAS de la Mezcla de Ingredientes</h1>
+            <h1>Modelo de Optimización</h1>
         </div>
 
         <div class="card-body">
-            <h2>Paso 1: Obtener el perfil de aminoácidos y la digestibilidad de cada ingrediente</h2>
-            <p>
-                Para cada ingrediente \( i \) (donde \( i = 1, 2, \dots, N \)), se necesita:
-            </p>
+            
+            <h2>Conjuntos y Parámetros</h2>
             <ul>
-                <li>\( AA_{i,j} \): La cantidad de cada aminoácido esencial (como lisina, metionina, etc.) por gramo de proteína, donde \( j \) representa el tipo de aminoácido.</li>
-                <li>\( P_i \): El contenido total de proteína en gramos por 100 gramos del ingrediente.</li>
-                <li>\( D_i \): El factor de digestibilidad de la proteína del ingrediente \( i \), que suele darse como un valor entre 0 y 1.</li>
+                <li><b>Conjuntos:</b>
+                    <ul>
+                        <li>\( i \in I \): Conjunto de ingredientes.</li>
+                        <li>\( j \in J \): Conjunto de aminoácidos esenciales.</li>
+                    </ul>
+                </li>
+                <li><b>Parámetros:</b>
+                    <ul>
+                        <li>\( D_i \): Digestibilidad del ingrediente \( i \).</li>
+                        <li>\( C_i \): Costo del ingrediente \( i \).</li>
+                        <li>\( P_i \): Contenido de proteínas del ingrediente \( i \) (en porcentaje).</li>
+                        <li>\( W_{\text{min}, i}, W_{\text{max}, i} \): Límites inferiores y superiores de la fracción de mezcla del ingrediente \( i \).</li>
+                        <li>\( \text{AA}_{i,j} \): Contenido del aminoácido esencial \( j \) en el ingrediente \( i \).</li>
+                        <li>\( \text{req}_j \): Requerimiento mínimo del aminoácido esencial \( j \).</li>
+                        <li>\( P_{\text{min}}, P_{\text{max}} \): Valores mínimos y máximos del contenido de proteínas en los ingredientes.</li>
+                        <li>\( D_{\text{min}}, D_{\text{max}} \): Valores mínimos y máximos de la digestibilidad de los ingredientes.</li>
+                        <li>\( \text{AA}_{\text{min}}, \text{AA}_{\text{max}} \): Valores mínimos y máximos del contenido de aminoácidos en los ingredientes.</li>
+                    </ul>
+                </li>
             </ul>
 
-            <h2>Paso 2: Calcular el contenido de aminoácidos en la mezcla</h2>
-            <p>
-                Para cada aminoácido \( j \), calcula la cantidad total en la mezcla basada en los ingredientes, su composición de proteínas
-                y sus respectivas proporciones \( W_i \), donde \( W_i \) es la fracción de cada ingrediente en la mezcla.
-                La cantidad total de cada aminoácido en la mezcla es:
-            </p>
-            \[
-            AA_{\text{mezcla}, j} = \sum_{i=1}^{N} W_i \cdot P_i \cdot AA_{i,j}
-            \]
-            <p>
-                Asimismo, calcula el contenido total de proteína en la mezcla:
-            </p>
-            \[
-            P_{\text{mezcla}} = \sum_{i=1}^{N} W_i \cdot P_i
-            \]
+            <h2>Variables</h2>
+            <ul>
+                <li>\( W_i \): Fracción del ingrediente \( i \) en la mezcla.</li>
+                <li>\( \text{AA}_{\text{mezcla}, j} \): Contenido total del aminoácido esencial \( j \) en la mezcla.</li>
+                <li>\( P_{\text{mezcla}} \): Contenido de proteínas en la mezcla.</li>
+                <li>\( D_{\text{mezcla}} \): Digestibilidad de la mezcla.</li>
+                <li>\( \text{AAS}_j \): Puntuación de aminoácido esencial \( j \).</li>
+                <li>\( \text{AAS}_{\text{limitante}} \): Puntuación del aminoácido limitante.</li>
+                <li>\( \text{PDCAAS} \): Puntaje PDCAAS de la mezcla.</li>
+            </ul>
 
-            <h2>Paso 3: Calcular la digestibilidad de la proteína en la mezcla</h2>
-            <p>
-                La digestibilidad total de la mezcla, \( D_{\text{mezcla}} \), es la media ponderada de la digestibilidad de cada ingrediente, ponderada por el contenido de proteína de cada ingrediente en la mezcla:
-            </p>
-            \[
-            D_{\text{mezcla}} = \frac{\sum_{i=1}^{N} W_i \cdot P_i \cdot D_i}{P_{\text{mezcla}}}
-            \]
+            <h2>Función Objetivo</h2>
+                \[ \max \text{PDCAAS} \]
 
-            <h2>Paso 4: Determinar el aminoácido limitante en la mezcla</h2>
-            <p>
-                Se compara la proporción de cada aminoácido esencial \( j \) en la mezcla con el requerimiento de aminoácidos para la población de referencia.
-                El requerimiento de cada aminoácido se encuentra expresado en mg por gr de proteína de la mezcla.
-            </p>
-            <p>
-                La puntuación de aminoácidos (AAS) de cada aminoácido \( j \) se calcula como:
-            </p>
-            \[
-            \text{AAS}_j = \frac{AA_{\text{mezcla}, j}/P_{\text{mezcla}}}{\text{requerimiento}_{j}}
-            \]
+            <h2>Restricciones</h2>
+            <ol>
+                <li><b>Cotas de las fracciones de mezcla:</b>
+                    \[ W_{\text{min}, i} \leq W_i \leq W_{\text{max}, i}, \quad \forall i \in I \]
+                </li>
+                <li><b>Cotas de la fracción de proteínas en la mezcla:</b>
+                    \[ P_{\text{min}} \leq P_{\text{mezcla}} \leq P_{\text{max}} \]
+                </li>
+                <li><b>Cotas de la digestibilidad de la mezcla:</b>
+                    \[ D_{\text{min}} \leq D_{\text{mezcla}} \leq D_{\text{max}} \]
+                </li>
+                <li><b>Cotas del contenido de aminoácidos en la mezcla:</b>
+                    \[ \text{AA}_{\text{min}} \leq \text{AA}_{\text{mezcla}, j} \leq \text{AA}_{\text{max}}, \quad \forall j \in J \]
+                </li>
+                <li><b>Suma de las fracciones:</b>
+                    \[ \sum_{i \in I} W_i = 1 \]
+                </li>
+                <li><b>Cálculo del contenido de aminoácidos en la mezcla:</b>
+                    \[ \text{AA}_{\text{mezcla}, j} = \sum_{i \in I} \left( \frac{P_i}{100} \cdot W_i \cdot \text{AA}_{i,j} \right), \quad \forall j \in J \]
+                </li>
+                <li><b>Cálculo del contenido de proteínas en la mezcla:</b>
+                    \[ P_{\text{mezcla}} = \sum_{i \in I} \left( \frac{P_i}{100} \cdot W_i \right) \]
+                </li>
+                <li><b>Cálculo del puntaje de aminoácido esencial (AAS):</b>
+                    \[ \text{AAS}_j = \frac{\text{AA}_{\text{mezcla}, j}}{P_{\text{mezcla}} \cdot \text{req}_j}, \quad \forall j \in J \]
+                </li>
+                <li><b>Puntuación del aminoácido limitante:</b>
+                    \[ \text{AAS}_{\text{limitante}} \leq \text{AAS}_j, \quad \forall j \in J \]
+                </li>
+                <li><b>Cálculo del puntaje PDCAAS:</b>
+                    \[ \text{PDCAAS} = D_{\text{mezcla}} \cdot \text{AAS}_{\text{limitante}} \]
+                </li>
+            </ol>
         
-            <h2>Paso 5: Calcular el PDCAAS de la mezcla</h2>
-            <p>El valor de \( \text{AAS} \) más bajo indica el aminoácido limitante de la mezcla. Finalmente, el PDCAAS de la mezcla se calcula como:
-            </p>
-            \[
-            \text{PDCAAS} = \min_{j} \{\text{AAS}_{j} \} \cdot D_{\text{mezcla}}
-            \]
-            <p>Si el resultado es mayor que 1, se ajusta a 1, ya que el PDCAAS máximo permitido es 1.</p>
+        
         </div>
     </div>
 </div>    
