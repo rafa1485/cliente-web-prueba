@@ -84,6 +84,28 @@
                 </table>
             </div>
             <div class="card-footer text-center">
+                <input type="radio" id="costo" name="funcion_objetivo" value="COSTO" 
+                    {% if objetivo_costo %}
+                        checked="checked"
+                    {% endif %}
+                    >
+                <label for="costo">Optimizar Solo Costo</label><br>
+
+                <input type="radio" id="pdcaas" name="funcion_objetivo" value="PDCAAS"
+                    {% if objetivo_pdcaas %}
+                        checked="checked"
+                    {% endif %}
+                >
+                <label for="pdcaas">Optimizar Solo PDCAAS</label><br>
+
+                <input type="radio" id="costo_pdcaas" name="funcion_objetivo" value="COSTO+PDCAAS"
+                    {% if objetivo_costo_y_pdcaas %}
+                        checked="checked"
+                    {% endif %}
+                >
+                <label for="costo_pdcaas">Optimizar 1ro COSTO y 2do PDCAAS</label><br>
+            </div>
+            <div class="card-footer text-center">
                 <button type="submit" class="btn btn-primary">Calcular</button>
             </div>
         </div>

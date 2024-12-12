@@ -420,6 +420,8 @@ def descargar_resultados_optimos():
 @app.route('/mezcla_optima', methods=['GET', 'POST'])
 @login_required
 def mezcla_optima():
+
+    # INCIALIZACIONES
     #ingredientes = []
     score_proteico = 0
     costo_por_kg = 0
@@ -429,6 +431,9 @@ def mezcla_optima():
     digestibilidad = 0
     pdcaas = 0
     score_proteico = 0
+    objetivo_costo=True
+    objetivo_pdcaas=False
+    objetivo_costo_y_pdcaas = False
 
     # Muestra todos los ingredientes para seleccionar
     conexion = conectar()
@@ -451,6 +456,26 @@ def mezcla_optima():
     dict_id_str_digestibilidades = {str(k):v for k,v in dict_id_digestibilidades.items() }
 
     if request.method == 'POST':
+
+        if request.form.get('funcion_objetivo') == 'COSTO':
+            objetivo_costo = True
+            objetivo_pdcaas = False
+            objetivo_costo_y_pdcaas = False
+            funcion_objetivo = 'COSTO'
+        elif request.form.get('funcion_objetivo') == 'PDCAAS':
+            objetivo_costo = False
+            objetivo_pdcaas = True
+            objetivo_costo_y_pdcaas = False
+            funcion_objetivo = 'PDCAAS'
+        elif request.form.get('funcion_objetivo') == 'COSTO+PDCAAS':
+            objetivo_costo = False
+            objetivo_pdcaas = False
+            objetivo_costo_y_pdcaas = True
+            funcion_objetivo = 'COSTO+PDCAAS'
+        else:
+            print('Error: Se mantienen la función objetivo por defecto.')
+            flash("Se mantienen la función objetivo por defecto.", "warning")
+        
 
         lista_ingredientes = [str(id) for id,_ in ingredientes]
 
@@ -594,7 +619,8 @@ def mezcla_optima():
             W_max = {k:dict_id_porcentajes_max[k] for k in dict_id_porcentajes_max.keys() if k in  id_ingredientes_seleccionados}
 
             url_servicio_mezcla_optima = 'http://localhost:8000/problema_mezcla'
-            data = {"ingredientes": id_ingredientes_seleccionados,
+            data = {"funcion_objetivo": funcion_objetivo,
+                    "ingredientes": id_ingredientes_seleccionados,
                     "nombres_aminoacidos": aminoacidos,
                     "digestibilidad":dict_id_digest_proteina,
                     "costo_ingredientes":dict_id_precio,
@@ -688,6 +714,12 @@ def mezcla_optima():
                     pdcaas = round(PDCAAS*100,1)
 
                     titulo = 'MEZCLA OPTIMIZADA'
+                    if objetivo_pdcaas:
+                        titulo = titulo + ': Función Objetivo "PDCAAS"'
+                    if objetivo_costo:
+                        titulo = titulo + ': Función Objetivo "COSTOS"'
+                    if objetivo_costo_y_pdcaas:
+                        titulo = titulo + ': Función Objetivo 1ro "COSTOS", 2do "PDCAAS"'
 
                     wb = crear_tabla_calculos(titulo=titulo, nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, score_proteico=SCORE_PROTEICO, digestibilidad=Dm, PDCAAS=PDCAAS)
 
@@ -710,20 +742,26 @@ def mezcla_optima():
                 
             except:
                 print('Error en la consulta web')
-            
+                flash("Error de conexión con el servidor de optimización.", "error")
+                
+                # creamos un diccionario con valores 0 para cada ingrediente
+                # ya que no se ha logrado una respuesta del servidor de optimización
+                dict_id_porcentajes_optimos = {}
+                for id in lista_ingredientes:
+                    dict_id_porcentajes_optimos.update({id:0})
 
             return render_template('mezcla_optima.html', ingredientes=ingredientes_id_str, digestibilidades=dict_id_str_digestibilidades, porcentajes_num_min=dict_id_porcentajes_min,
                                 porcentajes_num_max=dict_id_porcentajes_max, aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
                                 score_proteico=score_proteico, digestibilidad_mezcla=digestibilidad, PDCAAS=pdcaas, costo_por_kg=costo_por_kg, fraccion_proteina=P_mezcla,
                                 porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=costo_kg_prot_asimilable,
-                                optimo=dict_id_porcentajes_optimos)
+                                optimo=dict_id_porcentajes_optimos, objetivo_costo=objetivo_costo, objetivo_pdcaas=objetivo_pdcaas, objetivo_costo_y_pdcaas=objetivo_costo_y_pdcaas)
 
     
     return render_template('mezcla_optima.html', ingredientes=ingredientes_id_str, digestibilidades=dict_id_str_digestibilidades, porcentajes_num_min=False,
                             porcentajes_num_max=False, aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
                             score_proteico=score_proteico, digestibilidad_mezcla=digestibilidad, PDCAAS=pdcaas, costo_por_kg=costo_por_kg, fraccion_proteina=None, 
                             porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=None,
-                            optimo=None)
+                            optimo=None, objetivo_costo=True, objetivo_pdcaas=False, objetivo_costo_y_pdcaas=False)
 
 
 
