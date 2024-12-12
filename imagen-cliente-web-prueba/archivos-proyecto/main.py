@@ -54,13 +54,14 @@ def load_user(user_id):
     return None
 
 # Ruta protegida que solo puede accederse si el usuario está autenticado
-@app.route("/")
-@login_required
-def home():
-    #flash("Bienvenido, se ha logeado correctamente", "message")
-    return f"<h1>Bienvenido, {current_user.nombre}!</h1><a href='/logout'>Cerrar sesión</a>"
+# @app.route("/")
+# @login_required
+# def home():
+#     #flash("Bienvenido, se ha logeado correctamente", "message")
+#     return f"<h1>Bienvenido, {current_user.nombre}!</h1><a href='/logout'>Cerrar sesión</a>"
 
 # Ruta para iniciar sesión
+@app.route("/", methods=["GET", "POST"])
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
