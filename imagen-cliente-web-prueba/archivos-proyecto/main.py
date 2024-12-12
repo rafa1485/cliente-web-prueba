@@ -697,7 +697,16 @@ def mezcla_optima():
 
                     costo_kg_prot_asimilable = round(costo_por_kg/(PDCAAS*P_mezcla), 2)
                     
-                    dict_id_porcentajes = dict_W
+                    # creamos un diccionario con los valores optimos y que incluyalos ceros 
+                    # de los ungredientes que no se utilizaron
+                    dict_id_porcentajes_optimos = {}
+                    
+                    for id in lista_ingredientes:
+                        if id in dict_W.keys():
+                            dict_id_porcentajes_optimos.update({id:dict_W[id]})
+                        else:
+                            dict_id_porcentajes_optimos.update({id:0})
+
                 
             except:
                 print('Error en la consulta web')
@@ -706,13 +715,15 @@ def mezcla_optima():
             return render_template('mezcla_optima.html', ingredientes=ingredientes_id_str, digestibilidades=dict_id_str_digestibilidades, porcentajes_num_min=dict_id_porcentajes_min,
                                 porcentajes_num_max=dict_id_porcentajes_max, aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
                                 score_proteico=score_proteico, digestibilidad_mezcla=digestibilidad, PDCAAS=pdcaas, costo_por_kg=costo_por_kg, fraccion_proteina=P_mezcla,
-                                porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=costo_kg_prot_asimilable)
+                                porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=costo_kg_prot_asimilable,
+                                optimo=dict_id_porcentajes_optimos)
 
     
     return render_template('mezcla_optima.html', ingredientes=ingredientes_id_str, digestibilidades=dict_id_str_digestibilidades, porcentajes_num_min=False,
                             porcentajes_num_max=False, aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
                             score_proteico=score_proteico, digestibilidad_mezcla=digestibilidad, PDCAAS=pdcaas, costo_por_kg=costo_por_kg, fraccion_proteina=None, 
-                            porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=None)
+                            porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=None,
+                            optimo=None)
 
 
 

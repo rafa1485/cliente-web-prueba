@@ -55,6 +55,7 @@
                             <th>Digestibilidad de la Proteína</th>
                             <th>Porcentaje Mínimo en Mezcla (%)</th>
                             <th>Porcentaje Máximo en Mezcla (%)</th>
+                            <th>Porcentaje Óptimo en Mezcla (%)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -72,6 +73,11 @@
                                        value="{{ porcentajes_num_max[ingrediente[0]] }}" 
                                        min="0" max="100" class="form-control">
                             </td>
+                            {% if optimo %}
+                                <td>{{ (optimo[ingrediente[0]]*100)|round }} </td>
+                            {% else %}
+                                <td> 0 </td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>
