@@ -443,6 +443,7 @@ def mezcla_optima():
     cursor.execute("SELECT id, nombre FROM ingredientes")
     ingredientes = cursor.fetchall()
     ingredientes_id_str = [(str(id),nombre) for id,nombre in ingredientes]
+    dict_ingredientes_id_str = dict(ingredientes_id_str)
 
     cursor.execute("SELECT id, digestibilidad_proteica FROM ingredientes")
     digestibilidades = cursor.fetchall()
@@ -501,6 +502,16 @@ def mezcla_optima():
         
         dict_id_porcentajes_max = dict(zip(lista_ingredientes,porcentajes_num_max))
         print(dict_id_porcentajes_max)
+
+        ## TEST de límites
+        ## Se comprueba que los limites del porcentaje de mezcla sean compatibles
+        # Comprobar que el minimo sea menor que el maximo para cada ingrediente
+        # En caso contrario mover automáticamente el mínimo a cero.
+        # Y luego emitir un mensaje de alerta
+        for id in lista_ingredientes:
+            if dict_id_porcentajes_min[id] > dict_id_porcentajes_max[id]:
+                dict_id_porcentajes_min.update({id:dict_id_porcentajes_max[id]})
+                flash('El mínimo es superior al máximo en el ingrediente  '+dict_ingredientes_id_str[id]+'. Se realizo un ajuste del valor mínimo.', 'warning')
 
         id_ingredientes_seleccionados = []
         for id in lista_ingredientes:
