@@ -26,12 +26,12 @@
                 </div>
                 <div class="col-md-4">
                     <label for="densidad" class="form-label">Densidad</label>
-                    <input type="number" step="any" id="densidad" name="densidad" placeholder="Densidad" 
+                    <input type="number" step="0.05" id="densidad" name="densidad" placeholder="Densidad" 
                            value="{{ ingrediente[2] if editar else '' }}" required class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label for="precio" class="form-label">Precio</label>
-                    <input type="number" step="any" id="precio" name="precio" placeholder="Precio" 
+                    <input type="number" step="0.05" id="precio" name="precio" placeholder="Precio" 
                            value="{{ ingrediente[3] if editar else '' }}" required class="form-control">
                 </div>
                 <div class="col-md-4">
@@ -41,79 +41,79 @@
                 </div>
                 <div class="col-md-4">
                     <label for="digestibilidad_proteica" class="form-label">Digestibilidad Proteica</label>
-                    <input type="number" step="any" id="digestibilidad_proteica" name="digestibilidad_proteica" 
+                    <input type="number" step="0.01" id="digestibilidad_proteica" name="digestibilidad_proteica" 
                            placeholder="Digestibilidad Proteica" value="{{ ingrediente[5] if editar else '' }}" 
                            required class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label for="contenido_proteico" class="form-label">Contenido Proteico</label>
-                    <input type="number" step="any" id="contenido_proteico" name="contenido_proteico" 
+                    <input type="number" step="1" id="contenido_proteico" name="contenido_proteico" 
                            placeholder="Contenido Proteico" value="{{ ingrediente[6] if editar else '' }}" 
                            required class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label for="contenido_carbohidratos" class="form-label">Contenido Carbohidratos</label>
-                    <input type="number" step="any" id="contenido_carbohidratos" name="contenido_carbohidratos" 
+                    <input type="number" step="1" id="contenido_carbohidratos" name="contenido_carbohidratos" 
                            placeholder="Contenido Carbohidratos" value="{{ ingrediente[7] if editar else '' }}" 
                            required class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label for="contenido_aceites" class="form-label">Contenido Aceites</label>
-                    <input type="number" step="any" id="contenido_aceites" name="contenido_aceites" 
+                    <input type="number" step="0.1" id="contenido_aceites" name="contenido_aceites" 
                            placeholder="Contenido Aceites" value="{{ ingrediente[8] if editar else '' }}" 
                            required class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label for="histidina" class="form-label">Histidina</label>
-                    <input type="number" step="any" id="histidina" name="histidina" 
+                    <input type="number" step="0.1" id="histidina" name="histidina" 
                            placeholder="Histidina" value="{{ ingrediente[9] if editar else '' }}" 
                            required class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label for="isoleucina" class="form-label">Isoleucina</label>
-                    <input type="number" step="any" id="isoleucina" name="isoleucina" 
+                    <input type="number" step="0.1" id="isoleucina" name="isoleucina" 
                            placeholder="Isoleucina" value="{{ ingrediente[10] if editar else '' }}" 
                            required class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label for="leucina" class="form-label">Leucina</label>
-                    <input type="number" step="any" id="leucina" name="leucina" 
+                    <input type="number" step="0.1" id="leucina" name="leucina" 
                            placeholder="Leucina" value="{{ ingrediente[11] if editar else '' }}" 
                            required class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label for="lisina" class="form-label">Lisina</label>
-                    <input type="number" step="any" id="lisina" name="lisina" 
+                    <input type="number" step="0.1" id="lisina" name="lisina" 
                            placeholder="Lisina" value="{{ ingrediente[12] if editar else '' }}" 
                            required class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label for="metionina" class="form-label">Metionina</label>
-                    <input type="number" step="any" id="metionina" name="metionina" 
+                    <input type="number" step="0.1" id="metionina" name="metionina" 
                            placeholder="Metionina" value="{{ ingrediente[13] if editar else '' }}" 
                            required class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label for="fenilalanina" class="form-label">Fenilalanina</label>
-                    <input type="number" step="any" id="fenilalanina" name="fenilalanina" 
+                    <input type="number" step="0.1" id="fenilalanina" name="fenilalanina" 
                            placeholder="Fenilalanina" value="{{ ingrediente[14] if editar else '' }}" 
                            required class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label for="treonina" class="form-label">Treonina</label>
-                    <input type="number" step="any" id="treonina" name="treonina" 
+                    <input type="number" step="0.1" id="treonina" name="treonina" 
                            placeholder="Treonina" value="{{ ingrediente[15] if editar else '' }}" 
                            required class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label for="triptofano" class="form-label">Triptófano</label>
-                    <input type="number" step="any" id="triptofano" name="triptofano" 
+                    <input type="number" step="0.1" id="triptofano" name="triptofano" 
                            placeholder="Triptófano" value="{{ ingrediente[16] if editar else '' }}" 
                            required class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label for="valina" class="form-label">Valina</label>
-                    <input type="number" step="any" id="valina" name="valina" 
+                    <input type="number" step="0.1" id="valina" name="valina" 
                            placeholder="Valina" value="{{ ingrediente[17] if editar else '' }}" 
                            required class="form-control">
                 </div>
