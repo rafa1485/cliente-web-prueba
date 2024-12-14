@@ -512,6 +512,11 @@ def mezcla_optima():
             if dict_id_porcentajes_min[id] > dict_id_porcentajes_max[id]:
                 dict_id_porcentajes_min.update({id:dict_id_porcentajes_max[id]})
                 flash('El mínimo es superior al máximo en el ingrediente  '+dict_ingredientes_id_str[id]+'. Se realizo un ajuste del valor mínimo.', 'warning')
+        total_minimos = sum(dict_id_porcentajes_min.values())
+        total_maximos = sum(dict_id_porcentajes_max.values())
+
+        if not (total_minimos <= 100 and total_maximos >= 100):
+            flash('Problema Infactible. Revisar mínimos y máximos.', 'warning')
 
         id_ingredientes_seleccionados = []
         for id in lista_ingredientes:
@@ -754,7 +759,7 @@ def mezcla_optima():
                 
             except:
                 print('Error en la consulta web')
-                flash("Error de conexión con el servidor de optimización.", "error")
+                flash("Error con el servidor de optimización.", "error")
                 
                 # creamos un diccionario con valores 0 para cada ingrediente
                 # ya que no se ha logrado una respuesta del servidor de optimización
