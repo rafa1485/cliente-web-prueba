@@ -1,5 +1,8 @@
 FROM debian:12.7
 
+ENV SECRET_KEY=${SECRET_KEY:-elsecretodetusojosdocker}
+ENV DOMAIN_OPT_SERVER=${DOMAIN_OPT_SERVER:-localhost}
+
 EXPOSE 5000
 
 # Establecer el directorio de trabajo en el contenedor

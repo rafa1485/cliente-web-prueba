@@ -11,6 +11,18 @@ import requests
 
 import json
 
+################################################
+## RECUPERO VARIABLES DE ENTORNO
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+# For local code testing use DOMAIN_OPT_SERVER=localhost
+# You can create this .env file with the following bash command
+# echo DOMAIN_OPT_SERVER=localhost >> .env
+DOMAIN_OPT_SERVER = os.getenv('DOMAIN_OPT_SERVER')
+SECRET_KEY = os.getenv('SECRET_KEY')
+
 
 ## Defino los contenidos de referencia de los distintos aminoacidos
 requerimiento_aminoacidos_esenciales = {'histidina':18, 'isoleucina':25, 'leucina':55, 'lisina':51, 'metionina':25, 'fenilalanina':47, 'treonina':27, 'triptofano':7, 'valina':32}
@@ -26,7 +38,7 @@ if not existencia_tabla_ingredientes:
 
 # Configuración inicial
 app = Flask(__name__)
-app.secret_key = b'elsecretodetusojos'
+app.secret_key = SECRET_KEY
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -635,7 +647,7 @@ def mezcla_optima():
             W_min = {k:dict_id_porcentajes_min[k] for k in dict_id_porcentajes_min.keys() if k in  id_ingredientes_seleccionados}
             W_max = {k:dict_id_porcentajes_max[k] for k in dict_id_porcentajes_max.keys() if k in  id_ingredientes_seleccionados}
 
-            url_servicio_mezcla_optima = 'http://localhost:8000/problema_mezcla'
+            url_servicio_mezcla_optima = 'http://'+DOMAIN_OPT_SERVER+':8000/problema_mezcla'
             data = {"funcion_objetivo": funcion_objetivo,
                     "ingredientes": id_ingredientes_seleccionados,
                     "nombres_aminoacidos": aminoacidos,
@@ -766,7 +778,7 @@ def mezcla_optima():
                 dict_id_porcentajes_optimos = {}
                 for id in lista_ingredientes:
                     dict_id_porcentajes_optimos.update({id:0})
-
+            
             return render_template('mezcla_optima.html', ingredientes=ingredientes_id_str, digestibilidades=dict_id_str_digestibilidades, porcentajes_num_min=dict_id_porcentajes_min,
                                 porcentajes_num_max=dict_id_porcentajes_max, aminoacidos=aminoacidos ,referencia_aminoacidos=requerimiento_aminoacidos_esenciales,
                                 score_proteico=score_proteico, digestibilidad_mezcla=digestibilidad, PDCAAS=pdcaas, costo_por_kg=costo_por_kg, fraccion_proteina=P_mezcla,

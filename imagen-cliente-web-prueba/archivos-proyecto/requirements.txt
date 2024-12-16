@@ -3,3 +3,4 @@ flask==3.0
 flask-login
 openpyxl>=3.0 
 requests
+python-dotenv
