@@ -2,7 +2,7 @@ import sqlite3
 
 # Conexión y creación de la base de datos
 def conectar():
-    return sqlite3.connect('./ingredientes.db')
+    return sqlite3.connect('./db/ingredientes.db')
 
 # Creación de la tabla de ingredientes
 def crear_tabla():
