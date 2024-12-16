@@ -2,6 +2,7 @@ FROM debian:12.7
 
 ENV SECRET_KEY=${SECRET_KEY:-elsecretodetusojosdocker}
 ENV DOMAIN_OPT_SERVER=${DOMAIN_OPT_SERVER:-localhost}
+ENV INVITED_PASS=${INVITED_PASS:-alimentos.saludables.ceape}
 
 EXPOSE 5000
 
