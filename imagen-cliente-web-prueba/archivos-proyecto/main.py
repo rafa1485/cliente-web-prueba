@@ -22,6 +22,7 @@ load_dotenv()
 # echo DOMAIN_OPT_SERVER=localhost >> .env
 DOMAIN_OPT_SERVER = os.getenv('DOMAIN_OPT_SERVER')
 SECRET_KEY = os.getenv('SECRET_KEY')
+INVITED_PASS = os.getenv('INVITED_PASS')
 
 
 ## Defino los contenidos de referencia de los distintos aminoacidos
@@ -47,8 +48,9 @@ login_manager.login_view = 'login'  # Redirige a /login si no está autenticado
 # Lista de usuarios (usuario, clave) en formato (nombre, contraseña_hash)
 usuarios = [
     ("admin", generate_password_hash("admin")),
-    ("edgar", generate_password_hash("ceape2024")),
-    ("user", generate_password_hash("test2024")),
+    ("edgar", generate_password_hash("administrador.ceape2024")),
+    ("test_user", generate_password_hash("test.ceape2024")),
+    ("invitado", generate_password_hash(INVITED_PASS))
 ]
 
 # Clase de usuario que extiende UserMixin para integración con Flask-Login
