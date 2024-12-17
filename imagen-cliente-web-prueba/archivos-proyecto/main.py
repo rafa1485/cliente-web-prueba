@@ -22,6 +22,7 @@ load_dotenv()
 # echo DOMAIN_OPT_SERVER=localhost >> .env
 DOMAIN_OPT_SERVER = os.getenv('DOMAIN_OPT_SERVER')
 DB_DIR_PATH = os.getenv('DB_DIR_PATH')
+EXCEL_RESULTS_DIR_PATH = os.getenv('EXCEL_RESULTS_DIR_PATH')
 SECRET_KEY = os.getenv('SECRET_KEY')
 INVITED_PASS = os.getenv('INVITED_PASS')
 
@@ -390,7 +391,7 @@ def mezcla_manual():
 
             wb = crear_tabla_calculos(titulo=titulo, nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, score_proteico=SCORE_PROTEICO, digestibilidad=Dm, PDCAAS=PDCAAS)
 
-            wb.save('./resultados_calculos_mezcla_manual.xlsx')
+            wb.save(EXCEL_RESULTS_DIR_PATH+'resultados_calculos_mezcla_manual.xlsx')
             
             porcentaje_total = 100*(sum(W))[0]
 
@@ -411,7 +412,7 @@ def mezcla_manual():
 @app.route('/descargar-mezcla-manual')
 @login_required
 def descargar_resultados_manual():
-    PATH='resultados_calculos_mezcla_manual.xlsx'
+    PATH=EXCEL_RESULTS_DIR_PATH+'resultados_calculos_mezcla_manual.xlsx'
     try:
         return send_file(PATH, as_attachment=True)
     except Exception as e:
@@ -422,7 +423,7 @@ def descargar_resultados_manual():
 @app.route('/descargar-mezcla-optimizada')
 @login_required
 def descargar_resultados_optimos():
-    PATH='resultados_calculos_mezcla_optimizada.xlsx'
+    PATH=EXCEL_RESULTS_DIR_PATH+'resultados_calculos_mezcla_optimizada.xlsx'
     try:
         return send_file(PATH, as_attachment=True)
     except Exception as e:
@@ -755,7 +756,7 @@ def mezcla_optima():
 
                     wb = crear_tabla_calculos(titulo=titulo, nombres=dict_id_nombre, fraccion_proteina=dict_id_cont_proteina, digestibilidad_proteina=dict_id_digest_proteina, contenido_aminoacidos=dict_id_amino, requerimientos=req_AA, porcentajes_mezcla=W, aminoacidos_mezcla_gr_mezcla=AA_mezcla, fraccion_proteina_mezcla=P_mezcla ,puntaje_aminoacidos=AAS, score_proteico=SCORE_PROTEICO, digestibilidad=Dm, PDCAAS=PDCAAS)
 
-                    wb.save('./resultados_calculos_mezcla_optimizada.xlsx')
+                    wb.save(EXCEL_RESULTS_DIR_PATH+'resultados_calculos_mezcla_optimizada.xlsx')
                     
                     porcentaje_total = 100*(sum(W))[0]
 
