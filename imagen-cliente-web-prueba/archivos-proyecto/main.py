@@ -26,6 +26,7 @@ EXCEL_RESULTS_DIR_PATH = os.getenv('EXCEL_RESULTS_DIR_PATH')
 SECRET_KEY = os.getenv('SECRET_KEY')
 INVITED_PASS = os.getenv('INVITED_PASS')
 
+print(EXCEL_RESULTS_DIR_PATH)
 
 ## Defino los contenidos de referencia de los distintos aminoacidos
 requerimiento_aminoacidos_esenciales = {'histidina':18, 'isoleucina':25, 'leucina':55, 'lisina':51, 'metionina':25, 'fenilalanina':47, 'treonina':27, 'triptofano':7, 'valina':32}
@@ -412,7 +413,7 @@ def mezcla_manual():
 @app.route('/descargar-mezcla-manual')
 @login_required
 def descargar_resultados_manual():
-    PATH=EXCEL_RESULTS_DIR_PATH+'resultados_calculos_mezcla_manual.xlsx'
+    PATH='excel_results/resultados_calculos_mezcla_manual.xlsx'
     try:
         return send_file(PATH, as_attachment=True)
     except Exception as e:
@@ -423,7 +424,7 @@ def descargar_resultados_manual():
 @app.route('/descargar-mezcla-optimizada')
 @login_required
 def descargar_resultados_optimos():
-    PATH=EXCEL_RESULTS_DIR_PATH+'resultados_calculos_mezcla_optimizada.xlsx'
+    PATH='excel_results/resultados_calculos_mezcla_optimizada.xlsx'
     try:
         return send_file(PATH, as_attachment=True)
     except Exception as e:
