@@ -1,6 +1,7 @@
 FROM debian:12.7
 
 ENV SECRET_KEY=${SECRET_KEY:-elsecretodetusojosdocker}
+ENV DB_DIR_PATH=${DB_DIR_PATH:-./archivos-proyecto/db/}
 ENV DOMAIN_OPT_SERVER=${DOMAIN_OPT_SERVER:-localhost}
 ENV INVITED_PASS=${INVITED_PASS:-alimentos.saludables.ceape}
 

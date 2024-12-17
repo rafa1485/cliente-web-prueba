@@ -21,6 +21,7 @@ load_dotenv()
 # You can create this .env file with the following bash command
 # echo DOMAIN_OPT_SERVER=localhost >> .env
 DOMAIN_OPT_SERVER = os.getenv('DOMAIN_OPT_SERVER')
+DB_DIR_PATH = os.getenv('DB_DIR_PATH')
 SECRET_KEY = os.getenv('SECRET_KEY')
 INVITED_PASS = os.getenv('INVITED_PASS')
 
@@ -30,12 +31,12 @@ requerimiento_aminoacidos_esenciales = {'histidina':18, 'isoleucina':25, 'leucin
 aminoacidos = [x for x in requerimiento_aminoacidos_esenciales.keys()]
 
 
-conectar()
+conectar(DB_DIR_PATH)
 
-existencia_tabla_ingredientes = tabla_existe('ingredientes')
+existencia_tabla_ingredientes = tabla_existe('ingredientes',DB_DIR_PATH)
 if not existencia_tabla_ingredientes:
-    crear_tabla()
-    inicializar_tabla_ingredientes()
+    crear_tabla(DB_DIR_PATH)
+    inicializar_tabla_ingredientes(DB_DIR_PATH)
 
 # Configuración inicial
 app = Flask(__name__)
@@ -115,7 +116,7 @@ def seleccion_app():
 @app.route('/abm_ingredientes')
 @login_required
 def abm_ingredientes():
-    conexion = conectar()
+    conexion = conectar(DB_DIR_PATH)
     cursor = conexion.cursor()
     cursor.execute("SELECT * FROM ingredientes")
     ingredientes = cursor.fetchall()
@@ -144,7 +145,7 @@ def agregar():
     triptofano = request.form['triptofano']
     valina = request.form['valina']
     
-    agregar_ingrediente(nombre, float(densidad), float(precio), color, float(digestibilidad_proteica), float(contenido_proteico),
+    agregar_ingrediente(DB_DIR_PATH, nombre, float(densidad), float(precio), color, float(digestibilidad_proteica), float(contenido_proteico),
                                      float(contenido_carbohidratos), float(contenido_aceites), float(histidina),
                                      float(isoleucina), float(leucina), float(lisina), float(metionina),
                                      float(fenilalanina), float(treonina), float(triptofano), float(valina))
@@ -154,7 +155,7 @@ def agregar():
 @app.route('/abm_ingredientes/eliminar/<int:id>')
 @login_required
 def eliminar(id):
-    borrar_ingrediente(id)
+    borrar_ingrediente(id, DB_DIR_PATH)
     return redirect(url_for('abm_ingredientes'))
 
 # Ruta para editar un ingrediente
@@ -179,13 +180,13 @@ def editar(id):
         triptofano = request.form['triptofano']
         valina = request.form['valina']
 
-        modificar_ingrediente(id, float(densidad), float(precio), color, float(digestibilidad_proteica), float(contenido_proteico),
+        modificar_ingrediente(DB_DIR_PATH, id, float(densidad), float(precio), color, float(digestibilidad_proteica), float(contenido_proteico),
                                            float(contenido_carbohidratos), float(contenido_aceites), float(histidina),
                                            float(isoleucina), float(leucina), float(lisina), float(metionina),
                                            float(fenilalanina), float(treonina), float(triptofano), float(valina))
         return redirect(url_for('abm_ingredientes'))
     else:
-        ingrediente = obtener_ingrediente(id)
+        ingrediente = obtener_ingrediente(id, DB_DIR_PATH)
         return render_template('ingredientes.html', editar=True, ingrediente=ingrediente)
 
 
@@ -205,7 +206,7 @@ def mezcla_manual():
     pdcaas = 0
 
     # Muestra todos los ingredientes para seleccionar
-    conexion = conectar()
+    conexion = conectar(DB_DIR_PATH)
     cursor = conexion.cursor()
 
     cursor.execute("SELECT id, nombre FROM ingredientes")
@@ -265,7 +266,7 @@ def mezcla_manual():
 
             for id_ingrediente_seleccionado in id_ingredientes_seleccionados:
                 porcentaje_str = str(dict_id_porcentajes[id_ingrediente_seleccionado])
-                ingrediente_info = obtener_info_ingrediente(id_ingrediente_seleccionado)
+                ingrediente_info = obtener_info_ingrediente(id_ingrediente_seleccionado, DB_DIR_PATH)
                 
                 if ingrediente_info:
                     print('porcentaje: '+ porcentaje_str)
@@ -451,7 +452,7 @@ def mezcla_optima():
     objetivo_costo_y_pdcaas = False
 
     # Muestra todos los ingredientes para seleccionar
-    conexion = conectar()
+    conexion = conectar(DB_DIR_PATH)
     cursor = conexion.cursor()
 
     cursor.execute("SELECT id, nombre FROM ingredientes")
@@ -565,7 +566,7 @@ def mezcla_optima():
             for id_ingrediente_seleccionado in id_ingredientes_seleccionados:
                 porcentaje_str_min = str(dict_id_porcentajes_min[id_ingrediente_seleccionado])
                 porcentaje_str_max = str(dict_id_porcentajes_max[id_ingrediente_seleccionado])
-                ingrediente_info = obtener_info_ingrediente(int(id_ingrediente_seleccionado))
+                ingrediente_info = obtener_info_ingrediente(int(id_ingrediente_seleccionado), DB_DIR_PATH)
                 
                 if ingrediente_info:
                     print('porcentaje min: '+ porcentaje_str_min)

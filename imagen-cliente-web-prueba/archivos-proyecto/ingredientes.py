@@ -1,12 +1,12 @@
 import sqlite3
 
 # Conexión y creación de la base de datos
-def conectar():
-    return sqlite3.connect('./db/ingredientes.db')
+def conectar(db_dir_path):
+    return sqlite3.connect(db_dir_path+'ingredientes.db')
 
 # Creación de la tabla de ingredientes
-def crear_tabla():
-    conexion = conectar()
+def crear_tabla(db_dir_path):
+    conexion = conectar(db_dir_path)
     cursor = conexion.cursor()
     cursor.execute('''CREATE TABLE IF NOT EXISTS ingredientes (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,11 +32,11 @@ def crear_tabla():
     conexion.close()
 
 # Verificamos que la tabla ingredientes exista
-def tabla_existe(nombre_tabla):
+def tabla_existe(nombre_tabla, db_dir_path):
     '''
         Esta función comprueba que exista la tabla "nombre_tabla" en la base de datos
     '''
-    conexion = conectar()
+    conexion = conectar(db_dir_path)
     cursor = conexion.cursor()
     cursor.execute('''SELECT name FROM sqlite_master WHERE type='table' AND name=?''', (nombre_tabla,))
     existe = cursor.fetchone() is not None
@@ -44,10 +44,10 @@ def tabla_existe(nombre_tabla):
     return existe
 
 # Inicialización de datos de prueba
-def inicializar_tabla_ingredientes():
+def inicializar_tabla_ingredientes(db_dir_path):
 
     # Conectar a la base de datos (o crearla si no existe)
-    conexion = conectar()
+    conexion = conectar(db_dir_path)
     cursor = conexion.cursor()
 
     # Crear la tabla si no existe
@@ -98,9 +98,9 @@ def inicializar_tabla_ingredientes():
     print("Tabla 'ingredientes' inicializada con éxito.")
 
 # Alta de ingrediente
-def agregar_ingrediente(nombre, densidad, precio, color, digestibilidad_proteica, contenido_proteico, contenido_carbohidratos, contenido_aceites,
+def agregar_ingrediente(db_dir_path, nombre, densidad, precio, color, digestibilidad_proteica, contenido_proteico, contenido_carbohidratos, contenido_aceites,
                         histidina, isoleucina, leucina, lisina, metionina, fenilalanina, treonina, triptofano, valina):
-    conexion = conectar()
+    conexion = conectar(db_dir_path)
     cursor = conexion.cursor()
     cursor.execute('''INSERT INTO ingredientes (nombre, densidad, precio, color, digestibilidad_proteica, contenido_proteico, contenido_carbohidratos, contenido_aceites, 
                       histidina, isoleucina, leucina, lisina, metionina, fenilalanina, treonina, triptofano, valina) 
@@ -113,8 +113,8 @@ def agregar_ingrediente(nombre, densidad, precio, color, digestibilidad_proteica
 # Búsqueda y consulta de ingredientes
 #TODO
 # CORREGIR: Se esta pasando un numero para buscar el ingrediente, mientras que los ingredientes estan nombrados con texto
-def obtener_ingrediente(id):
-    conexion = conectar()
+def obtener_ingrediente(id, db_dir_path):
+    conexion = conectar(db_dir_path)
     cursor = conexion.cursor()
     cursor.execute("SELECT * FROM ingredientes WHERE id = ?", (id,))
     ingrediente = cursor.fetchone()
@@ -124,8 +124,8 @@ def obtener_ingrediente(id):
     return ingrediente
 
 # Búsqueda y consulta de la informacion de los ingredientes
-def obtener_info_ingrediente(id):
-    conexion = conectar()
+def obtener_info_ingrediente(id, db_dir_path):
+    conexion = conectar(db_dir_path)
     cursor = conexion.cursor()
     cursor.execute("SELECT * FROM ingredientes WHERE id = ?", (id,))
     ingrediente_info = cursor.fetchone()
@@ -137,10 +137,10 @@ def obtener_info_ingrediente(id):
 #TODO
 # No me permite cambiar el nombre de los ingredientes, sería bueno agregarlo
 # Modificación de un ingrediente
-def modificar_ingrediente(id, densidad=None, precio=None, color=None, digestibilidad_proteica=None, contenido_proteico=None, contenido_carbohidratos=None,
+def modificar_ingrediente(db_dir_path, id, densidad=None, precio=None, color=None, digestibilidad_proteica=None, contenido_proteico=None, contenido_carbohidratos=None,
                           contenido_aceites=None, histidina=None, isoleucina=None, leucina=None, lisina=None,
                           metionina=None, fenilalanina=None, treonina=None, triptofano=None, valina=None):
-    conexion = conectar()
+    conexion = conectar(db_dir_path)
     cursor = conexion.cursor()
     valores = {
         "densidad": densidad, "precio": precio, "color": color, "digestibilidad_proteica":digestibilidad_proteica, "contenido_proteico": contenido_proteico,
@@ -158,8 +158,8 @@ def modificar_ingrediente(id, densidad=None, precio=None, color=None, digestibil
     conexion.close()
 
 # Borrar un ingrediente
-def borrar_ingrediente(id):
-    conexion = conectar()
+def borrar_ingrediente(id, db_dir_path):
+    conexion = conectar(db_dir_path)
     cursor = conexion.cursor()
     cursor.execute("DELETE FROM ingredientes WHERE id = ?", (id,))
     conexion.commit()
