@@ -78,7 +78,7 @@ def load_user(user_id):
 #     return f"<h1>Bienvenido, {current_user.nombre}!</h1><a href='/logout'>Cerrar sesión</a>"
 
 # Ruta para iniciar sesión
-@app.route("/", methods=["GET", "POST"])
+@app.route("/ceape", methods=["GET", "POST"])
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -107,7 +107,7 @@ def logout():
 
 
 # Seleccionar app
-@app.route('/seleccion_app')
+@app.route('/ceape/seleccion_app')
 @login_required
 def seleccion_app():
     return render_template('select_apps.html')
@@ -115,7 +115,7 @@ def seleccion_app():
 
 ##*****************************************************************************************
 # Ruta principal que muestra todos los ingredientes
-@app.route('/abm_ingredientes')
+@app.route('/ceape/abm_ingredientes')
 @login_required
 def abm_ingredientes():
     conexion = conectar(DB_DIR_PATH)
@@ -126,7 +126,7 @@ def abm_ingredientes():
     return render_template('ingredientes.html', ingredientes=ingredientes)
 
 # Ruta para agregar un nuevo ingrediente
-@app.route('/abm_ingredientes/agregar', methods=['POST'])
+@app.route('/ceape/abm_ingredientes/agregar', methods=['POST'])
 @login_required
 def agregar():
     nombre = request.form['nombre']
@@ -154,14 +154,14 @@ def agregar():
     return redirect(url_for('abm_ingredientes'))
 
 # Ruta para eliminar un ingrediente
-@app.route('/abm_ingredientes/eliminar/<int:id>')
+@app.route('/ceape/abm_ingredientes/eliminar/<int:id>')
 @login_required
 def eliminar(id):
     borrar_ingrediente(id, DB_DIR_PATH)
     return redirect(url_for('abm_ingredientes'))
 
 # Ruta para editar un ingrediente
-@app.route('/abm_ingredientes/editar/<int:id>', methods=['GET', 'POST'])
+@app.route('/ceape/abm_ingredientes/editar/<int:id>', methods=['GET', 'POST'])
 @login_required
 def editar(id):
     if request.method == 'POST':
@@ -197,7 +197,7 @@ def editar(id):
 # Aplicacion de mezcla óptima
 
 # Ruta para seleccionar ingredientes y calcular los valores
-@app.route('/mezcla_manual', methods=['GET', 'POST'])
+@app.route('/ceape/mezcla_manual', methods=['GET', 'POST'])
 @login_required
 def mezcla_manual():
     #ingredientes = []
@@ -410,7 +410,7 @@ def mezcla_manual():
                             porcentaje_total=porcentaje_total, costo_kg_prot_asimilable=None)
 
 # Descarga de resultado y cálculos de mezcla manual
-@app.route('/descargar-mezcla-manual')
+@app.route('/ceape/descargar-mezcla-manual')
 @login_required
 def descargar_resultados_manual():
     PATH='excel_results/resultados_calculos_mezcla_manual.xlsx'
@@ -421,7 +421,7 @@ def descargar_resultados_manual():
 
 
 # Descarga de resultado y cálculos de mezcla optimizada
-@app.route('/descargar-mezcla-optimizada')
+@app.route('/ceape/descargar-mezcla-optimizada')
 @login_required
 def descargar_resultados_optimos():
     PATH='excel_results/resultados_calculos_mezcla_optimizada.xlsx'
@@ -435,7 +435,7 @@ def descargar_resultados_optimos():
 # Aplicacion de mezcla óptima
 
 # Ruta para seleccionar ingredientes y calcular los valores
-@app.route('/mezcla_optima', methods=['GET', 'POST'])
+@app.route('/ceape/mezcla_optima', methods=['GET', 'POST'])
 @login_required
 def mezcla_optima():
 
