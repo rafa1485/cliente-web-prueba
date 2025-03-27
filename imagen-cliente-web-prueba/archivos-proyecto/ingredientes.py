@@ -75,14 +75,21 @@ def inicializar_tabla_ingredientes(db_dir_path):
     ''')
 
     # Insertar los valores de cada ingrediente
+    # Valores revisados:
+    # - Composicion aminoacidos
+    # - Proteinas
+    # - carbohidratos
+    # - aceites
+
+
+
     ingredientes = [
-        ('Soja texturizada', 0.25, 3.5, 'Beige', 0.95, 50, 30, 1.2, 6.50, 23.00, 38.00, 39.00, 5.00, 25.00, 22.00, 6.00, 25.00),
-        ('Harina de trigo', 0.6, 1, 'Blanco', 0.85, 11, 73, 1.5, 1.70, 4.80, 8.30, 2.90, 1.60, 6.70, 3.10, 0.90, 5.70),
-        ('Harina integral de trigo', 0.6, 1,'Marrón', 0.8, 13, 67, 2.5, 2.50, 6.80, 12.00, 3.20, 1.80, 8.00, 4.00, 1.20, 6.00),
-        ('Harina de garbanzo', 0.7, 2, 'Amarillo', 0.85, 22, 58, 6, 3.40, 8.20, 15.00, 17.00, 2.20, 10.40, 6.20, 1.50, 10.80),
-        ('Harina de algarroba', 0.5, 5, 'Marrón', 0.80,4, 90, 0.6, 0.60, 1.90, 3.20, 3.50, 0.50, 1.80, 0.90, 0.30, 2.10),
-        ('Fécula de mandioca', 0.5, 1, 'Blanco', 0.8,1, 88, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        ('Harina de arvejas', 0.6, 2, 'Verde', 0.85,22, 60, 2.5, 4.20, 10.00, 16.00, 17.00, 2.50, 11.00, 7.80, 2.00, 10.00)
+        ('Soja texturizada',         0.25, 3.5, 'Beige',    0.95, 50, 30, 4.0,     24.8, 45.2,  80.4,  59.9,  12.2, 56.0,  38.5,  12.0, 45.2), #listo
+        ('Harina integral de trigo', 0.6,  1,   'Marrón',    0.8, 13, 75, 1.0,     23.5, 38.9,  68.3,  22.1,  16.1, 49.8,  26.7,  12.9, 43.4), #listo FDC ID: 169721
+        ('Harina de garbanzo',       0.7,  10,   'Amarillo', 0.85, 22, 58, 6.0,     27.7, 43.1,  71.6,  67.4,  13.2, 53.9,  37.5,  9.80, 42.3), #listo FDC ID: 173756
+        ('Harina de Arroz',          0.5,  5,   'Blanco',   0.80, 4,  80, 1.4,     25.0, 41.0,  82.0,  35.8,  24.2, 53.3,  35.3,  12.1, 58.5), #listo FDC ID: 169714
+        ('Harina de arvejas',        0.6,  2,   'Verde',    0.85, 22, 60, 2.0,     19.7, 36.00, 60.00, 58.50, 15.1, 36.90, 37.5,  6.80, 43.40) #listo
+        ('Harina de avena',          0.6,  2,   'Beige',    0.85, 13, 66, 7.0,     22.1, 38.7,  72.4,  32.1,  18.1, 49.3,  29.4,  13.8, 46.8)  #listo FDC ID: 172678
     ]
 
     cursor.executemany('''
