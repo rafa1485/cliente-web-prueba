@@ -29,7 +29,7 @@ INVITED_PASS = os.getenv('INVITED_PASS')
 print(EXCEL_RESULTS_DIR_PATH)
 
 ## Defino los contenidos de referencia de los distintos aminoacidos
-requerimiento_aminoacidos_esenciales = {'histidina':18, 'isoleucina':25, 'leucina':55, 'lisina':51, 'metionina':25, 'fenilalanina':47, 'treonina':27, 'triptofano':7, 'valina':32}
+requerimiento_aminoacidos_esenciales = {'histidina':18, 'isoleucina':25, 'leucina':55, 'lisina':51, 'metionina+cisteina':25, 'fenilalanina+tirosina':47, 'treonina':27, 'triptofano':7, 'valina':32}
 aminoacidos = [x for x in requerimiento_aminoacidos_esenciales.keys()]
 
 
