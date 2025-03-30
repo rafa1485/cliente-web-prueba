@@ -386,6 +386,9 @@ def mezcla_manual():
 
             PDCAAS =  SCORE_PROTEICO* Dm
 
+            if PDCAAS > 1:
+                PDCAAS = 1
+
             pdcaas = round(PDCAAS*100,1)
 
             titulo = 'MEZCLA MANUAL'
@@ -744,6 +747,9 @@ def mezcla_optima():
                     score_proteico = round(SCORE_PROTEICO*100, 1)
 
                     PDCAAS =  SCORE_PROTEICO* Dm
+
+                    if PDCAAS > 1:
+                        PDCAAS = 1
 
                     pdcaas = round(PDCAAS*100,1)
 
